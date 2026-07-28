@@ -21,10 +21,9 @@ export default function PlanYourStay() {
   };
 
   return (
-    <section id="plan-stay" className="py-16 bg-limestone relative overflow-hidden">
+    <section id="plan-stay" className="py-10 bg-limestone relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
-        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-clay block mb-3">
             RESERVATIONS & CONTACT
@@ -35,7 +34,6 @@ export default function PlanYourStay() {
           <div className="w-12 h-[2px] bg-clay mx-auto mb-6" />
         </div>
 
-        {/* Info Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch mb-16 max-w-5xl mx-auto">
           
           <div className="space-y-8 flex flex-col">
@@ -94,10 +92,7 @@ export default function PlanYourStay() {
           </div>
         </div>
 
-        {/* Embedded Google Map Layer */}
         <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-lg border border-clay/10 bg-limestone/50 group">
-          
-          {/* الخريطة نفسها */}
           <iframe
             title="NOPREA Location"
             src="https://maps.google.com/maps?q=24.00835121202515,32.879951242329156&t=&z=15&ie=UTF8&iwloc=&output=embed"
@@ -105,7 +100,6 @@ export default function PlanYourStay() {
             allowFullScreen={false} loading="lazy"
           />
 
-          {/* الكارت العايم اللي في النص */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center w-[300px] z-10">
             <div className="w-12 h-12 bg-[#b89584] rounded-full flex items-center justify-center mb-4 shadow-md text-white">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +110,6 @@ export default function PlanYourStay() {
             <h4 className="font-serif text-lg text-charcoal font-semibold mb-1">NOPREA Boutique Hotel</h4>
             <p className="text-[10px] tracking-[0.2em] uppercase text-charcoal/60 mb-6">Haissa Island, Aswan</p>
             
-            {/* تم التعديل هنا: إضافة اسم الفندق للرابط عشان جوجل مابس يقرأه كعنوان */}
             <a 
               href="https://maps.app.goo.gl/ZVKyN9LhsXSQ3dgz6?g_st=ic"
               target="_blank"

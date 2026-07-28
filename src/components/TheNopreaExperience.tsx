@@ -33,7 +33,7 @@ export default function TheNopreaExperience() {
   const handleNext = () => setActiveIndex((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
 
   return (
-    <section className="py-24 bg-[#F9F8F6]">
+    <section className="py-10 bg-[#F9F8F6]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -44,7 +44,6 @@ export default function TheNopreaExperience() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* Left Column (40%): Experience Highlights with Descriptions */}
           <div className="lg:col-span-5 space-y-6">
             <h3 className="font-serif text-2xl text-[#2C2C2C] mb-6">Experience Highlights</h3>
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -62,7 +61,6 @@ export default function TheNopreaExperience() {
             </div>
           </div>
 
-          {/* Right Column (60%): Review Carousel */}
           <div className="lg:col-span-7">
             <h3 className="font-serif text-2xl text-[#2C2C2C] mb-6">What Our Guests Say</h3>
             

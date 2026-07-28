@@ -46,8 +46,7 @@ export default function DiscoverNoprea({ onCardClick }: DiscoverNopreaProps) {
   ];
 
   return (
-    // تم تغيير الـ padding من py-24 إلى py-16 لتقليل المسافة
-    <section className="py-16 bg-[#F9F8F6] relative">
+    <section className="py-10 bg-[#F9F8F6] relative">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-4xl md:text-5xl font-serif text-[#2C2C2C] mb-6">Experience Haissa Island</h2>

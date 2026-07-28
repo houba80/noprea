@@ -18,7 +18,6 @@ export default function Gallery() {
   const [activeAlbum, setActiveAlbum] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
 
-  // 🌟 نظام الألبومات الأربعة بناءً على طلبك
   const albums: Album[] = [
     {
       id: 'rooms',
@@ -108,7 +107,7 @@ export default function Gallery() {
   };
 
   return (
-    <section id="gallery" className="py-24 bg-warm-white relative overflow-hidden">
+    <section id="gallery" className="py-10 bg-warm-white relative overflow-hidden">
       <div className="absolute right-0 bottom-0 w-96 h-96 bg-clay/5 rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -125,7 +124,6 @@ export default function Gallery() {
           </p>
         </div>
 
-        {/* 🌟 Albums Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {albums.map((album) => (
             <div
@@ -159,7 +157,6 @@ export default function Gallery() {
         </div>
       </div>
 
-      {/* 🌟 Lightbox Viewer (يفتح الصور الخاصة بالألبوم المختار فقط) */}
       {activeAlbum && currentAlbumData && (
         <div className="fixed inset-0 z-50 bg-charcoal/95 backdrop-blur-md flex flex-col justify-between items-center py-6 px-4 animate-fade-in">
           <div className="w-full max-w-7xl flex justify-between items-center text-white z-10">
