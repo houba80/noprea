@@ -28,7 +28,8 @@ export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
 
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-black/50 pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-16">
+      {/* التعديل هنا: تم تغيير mt-16 إلى mt-32 md:mt-40 لإنزال المحتوى بالكامل بعيداً عن الـ Navbar */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-32 md:mt-40">
         <div className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full animate-fadeIn">
           <Compass className="w-4 h-4 text-warm-sand animate-spin-slow" />
           <span className="text-[10px] tracking-[0.3em] uppercase font-semibold text-warm-sand">
@@ -67,8 +68,6 @@ export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
           </Link>
         </div>
       </div>
-
-      {/* تمت إزالة ال Scroll Discovery من هنا لمنع ال Glitch بناء على طلب العميل */}
       
     </section>
   );
