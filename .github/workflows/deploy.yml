@@ -3,7 +3,7 @@ name: Deploy React App via FTP
 on:
   push:
     branches:
-      - main  # لو اسم البرانش بتاعك master، غير الكلمة دي لـ master
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,10 +16,12 @@ jobs:
     - name: ⚙️ Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18' # إصدار النود المناسب لـ Vite
+        node-version: '20'
 
     - name: 📦 Install Dependencies
-      run: npm install --no-package-lock
+      run: |
+        rm -f package-lock.json
+        npm install
 
     - name: 🏗️ Build Project
       run: npm run build
@@ -31,6 +33,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
-        # ⚠️ ركز في السطر اللي جاي: ده مسار الفولدر على سيرفر Hostinger
-        # لو الدومين الفرعي مربوط بفولدر معين، اكتب اسمه. لو بيترفع على الروت مباشرة سيبه كده.
         server-dir: ./
