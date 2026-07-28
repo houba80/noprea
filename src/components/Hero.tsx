@@ -9,7 +9,7 @@ interface HeroProps {
 
 export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-charcoal text-white">
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal text-white pb-12">
       <video
         autoPlay
         loop
@@ -28,8 +28,8 @@ export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
 
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-black/50 pointer-events-none" />
 
-      {/* التعديل هنا: تم تغيير mt-16 إلى mt-32 md:mt-40 لإنزال المحتوى بالكامل بعيداً عن الـ Navbar */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-32 md:mt-40">
+      {/* التعديل هنا: ضفنا mt-28 sm:mt-32 عشان نزق المحتوى لتحت ويبعد عن الـ Navbar تماماً */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 mt-28 sm:mt-32">
         <div className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full animate-fadeIn">
           <Compass className="w-4 h-4 text-warm-sand animate-spin-slow" />
           <span className="text-[10px] tracking-[0.3em] uppercase font-semibold text-warm-sand">
@@ -68,7 +68,6 @@ export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
           </Link>
         </div>
       </div>
-      
     </section>
   );
 }

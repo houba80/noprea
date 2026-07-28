@@ -21,7 +21,6 @@ export default function PlanYourStay() {
   };
 
   return (
-    // تم تقليل ال padding الرأسي هنا من py-24 إلى py-12 أو py-16
     <section id="plan-stay" className="py-16 bg-limestone relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
@@ -37,7 +36,6 @@ export default function PlanYourStay() {
         </div>
 
         {/* Info Grid */}
-        {/* تمت إزالة lg:col-span-12 وتركيب القسمين الباقيين ليتوسطا الشاشة بشكل أفضل */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch mb-16 max-w-5xl mx-auto">
           
           <div className="space-y-8 flex flex-col">
@@ -93,18 +91,41 @@ export default function PlanYourStay() {
                 </form>
               )}
             </div>
-            {/* تمت إزالة Guest Relations من هنا */}
           </div>
         </div>
 
         {/* Embedded Google Map Layer */}
-        <div className="h-[400px] rounded-3xl overflow-hidden relative shadow-md border border-clay/10 bg-limestone/50">
+        <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-lg border border-clay/10 bg-limestone/50 group">
+          
+          {/* الخريطة نفسها */}
           <iframe
             title="NOPREA Location"
-            src="https://maps.google.com/maps?q=Heissa%20Island,%20Aswan,%20Egypt&t=&z=14&ie=UTF8&iwloc=&output=embed"
-            className="w-full h-full border-0 grayscale opacity-85 contrast-125 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+            src="https://maps.google.com/maps?q=24.00835121202515,32.879951242329156&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            className="absolute inset-0 w-full h-full border-0 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
             allowFullScreen={false} loading="lazy"
           />
+
+          {/* الكارت العايم اللي في النص */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center w-[300px] z-10">
+            <div className="w-12 h-12 bg-[#b89584] rounded-full flex items-center justify-center mb-4 shadow-md text-white">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h4 className="font-serif text-lg text-charcoal font-semibold mb-1">NOPREA Boutique Hotel</h4>
+            <p className="text-[10px] tracking-[0.2em] uppercase text-charcoal/60 mb-6">Haissa Island, Aswan</p>
+            
+            {/* تم التعديل هنا: إضافة اسم الفندق للرابط عشان جوجل مابس يقرأه كعنوان */}
+            <a 
+              href="https://maps.app.goo.gl/ZVKyN9LhsXSQ3dgz6?g_st=ic"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#b89584] text-xs font-semibold flex items-center gap-2 hover:text-terracotta transition-colors cursor-pointer"
+            >
+              Open in Google Maps App <ArrowRight className="w-3 h-3" />
+            </a>
+          </div>
         </div>
       </div>
     </section>

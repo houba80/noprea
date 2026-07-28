@@ -56,7 +56,7 @@ export default function RoomCard({ room, onBookClick }: RoomCardProps) {
                   <div className="flex-shrink-0 p-1 rounded bg-limestone border border-clay/15">
                     <Check className="w-3.5 h-3.5 text-terracotta" />
                   </div>
-                  <span className="text-xs text-charcoal/85 tracking-wide font-light line-clamp-1">
+                  <span className="text-xs text-charcoal/85 tracking-wide font-light line-clamp-1 shrink-0">
                     {feature}
                   </span>
                 </div>
@@ -65,17 +65,17 @@ export default function RoomCard({ room, onBookClick }: RoomCardProps) {
           </div>
         </div>
 
-        {/* 🌟 تم تفعيل الأزرار لتقوم بفتح صفحة Little Hotelier */}
+        {/* 🌟 تم تصحيح الكلمة لـ Book Stay وإضافة whitespace-nowrap لمنع تكسير النص */}
         <div className="pt-6 border-t border-clay/10 flex flex-col sm:flex-row items-center gap-3">
           <button
             onClick={() => onBookClick(room.name)}
-            className="cursor-pointer w-full text-center px-6 py-3 rounded-full bg-nile-blue text-warm-white text-xs font-semibold uppercase tracking-widest hover:bg-terracotta hover:shadow-lg hover:shadow-terracotta/25 hover:-translate-y-0.5 transition-all duration-300"
+            className="cursor-pointer w-full whitespace-nowrap text-center px-6 py-3 rounded-full bg-nile-blue text-warm-white text-xs font-semibold uppercase tracking-widest hover:bg-terracotta hover:shadow-lg hover:shadow-terracotta/25 hover:-translate-y-0.5 transition-all duration-300"
           >
-            Book Saty
+            Book Stay
           </button>
           <button
             onClick={() => onBookClick(room.name)}
-            className="cursor-pointer w-full text-center px-6 py-3 rounded-full border border-clay/40 text-clay text-xs font-semibold uppercase tracking-widest hover:bg-clay hover:text-white hover:-translate-y-0.5 transition-all duration-300"
+            className="cursor-pointer w-full whitespace-nowrap text-center px-6 py-3 rounded-full border border-clay/40 text-clay text-xs font-semibold uppercase tracking-widest hover:bg-clay hover:text-white hover:-translate-y-0.5 transition-all duration-300"
           >
             Check Availability
           </button>

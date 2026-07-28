@@ -42,7 +42,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#333333] text-white pb-10 border-t border-white/5 relative overflow-hidden">
+    <footer className="bg-[#333333] text-white pb-10 border-t border-white/5 relative overflow-hidden w-full">
       
       <style>
         {`
@@ -69,38 +69,38 @@ export default function Footer() {
           </span>
         </div>
         
-        <div className="relative w-full">
+        <div className="relative w-full max-w-full overflow-hidden">
           {/* تدرج لوني على الأطراف لعمل تأثير التلاشي */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-r from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
           
           <div className="flex overflow-hidden group">
             <div className="animate-infinite-scroll">
               
               {/* البلوك الأول (يحمل نسختين من اللوجوهات) */}
-              <div className="flex items-center gap-16 px-8 shrink-0">
+              <div className="flex items-center gap-12 md:gap-16 px-6 md:px-8 shrink-0">
                 {[...partners, ...partners].map((partner, idx) => (
                   partner.link ? (
                     <a key={`block1-${idx}`} href={partner.link} aria-label={`Visit our page on ${partner.name}`} target="_blank" rel="noopener noreferrer" className="block shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
+                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
                     </a>
                   ) : (
                     <div key={`block1-${idx}`} className="shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
+                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
                     </div>
                   )
                 ))}
               </div>
 
               {/* البلوك الثاني (تطابق تام للبلوك الأول عشان الـ Loop يكون مثالي) */}
-              <div className="flex items-center gap-16 px-8 shrink-0">
+              <div className="flex items-center gap-12 md:gap-16 px-6 md:px-8 shrink-0">
                 {[...partners, ...partners].map((partner, idx) => (
                   partner.link ? (
                     <a key={`block2-${idx}`} href={partner.link} aria-label={`Visit our page on ${partner.name}`} target="_blank" rel="noopener noreferrer" className="block shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
+                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
                     </a>
                   ) : (
                     <div key={`block2-${idx}`} className="shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
+                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
                     </div>
                   )
                 ))}
@@ -110,12 +110,13 @@ export default function Footer() {
           </div>
 
           {/* تدرج لوني على الأطراف لعمل تأثير التلاشي */}
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-l from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
         </div>
       </div>
 
+      {/* حاوية محكمة لمنع التمدد في الشاشات الكبيرة */}
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10 items-start">
           
           <div className="lg:col-span-4 space-y-6">
             <Link to="/" onClick={scrollToTop} aria-label="Go to homepage" className="inline-block cursor-pointer mb-2">
@@ -125,7 +126,7 @@ export default function Footer() {
                   alt="NOPREA Boutique Hotel" 
                   width="180"
                   height="128"
-                  className="h-28 md:h-32 w-auto object-contain"
+                  className="h-24 md:h-28 lg:h-32 w-auto object-contain"
                   onError={() => setLogoError(true)}
                 />
               ) : (
@@ -192,17 +193,17 @@ export default function Footer() {
             {success ? (
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E5D3B3]">Subscribed successfully!</div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
+              <form onSubmit={handleSubscribe} className="flex gap-2 w-full">
                 <input
                   type="email"
                   placeholder="Your Email"
                   aria-label="Email Address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-xs w-full text-white placeholder-white/30 focus:outline-none"
+                  className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-xs flex-1 text-white placeholder-white/30 focus:outline-none"
                   required
                 />
-                <button type="submit" aria-label="Subscribe to newsletter" className="cursor-pointer p-3 bg-[#C28C7E] hover:bg-[#B78C74] text-white rounded-xl transition-all">
+                <button type="submit" aria-label="Subscribe to newsletter" className="cursor-pointer shrink-0 p-3 bg-[#C28C7E] hover:bg-[#B78C74] text-white rounded-xl transition-all">
                   <Send className="w-4 h-4" />
                 </button>
               </form>
