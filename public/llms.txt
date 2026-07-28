@@ -1,0 +1,9 @@
+# NOPREA Boutique Hotel
+
+NOPREA is a boutique hotel located on Haissa Island in Aswan, Egypt. 
+We offer boutique accommodations, panoramic Nile views, signature riverside dining, and seasonal well-being retreats.
+
+[Link to Home](/)
+[Link to Stay](/stay)
+[Link to Dining](/dining)
+[Link to Retreats](/retreats)

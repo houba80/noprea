@@ -1,0 +1,6 @@
+{
+  "name": "NOPREA Boutique Hotel",
+  "description": "An elegant boutique hotel website celebrating Nubian heritage, authentic hospitality, and the beauty of Haissa Island, Aswan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
