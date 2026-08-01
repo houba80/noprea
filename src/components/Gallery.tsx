@@ -1,113 +1,57 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+import React, { useState, useEffect } from 'react';
+import { Layers, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { fetchGallery } from '../api/index';
 
-import { useState } from 'react';
-import { Maximize2, X, ChevronLeft, ChevronRight, Image as ImageIcon, Layers } from 'lucide-react';
-
-interface Album {
-  id: string;
-  title: string;
-  description: string;
-  coverImage: string;
-  images: { src: string; title: string }[];
-}
+// 🟢 السطر السحري لمسار الصور الديناميكي
+const BACKEND_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
 
 export default function Gallery() {
-  const [activeAlbum, setActiveAlbum] = useState<string | null>(null);
+  const [albums, setAlbums] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [selectedAlbum, setSelectedAlbum] = useState<any | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
 
-  const albums: Album[] = [
-    {
-      id: 'rooms',
-      title: 'Boutique Accommodation',
-      description: 'Explore our individually designed rooms and suites overlooking the Nile.',
-      coverImage: '/Guest-Spaces/noprea-room-window-nile-view.avif',
-      images: [
-        { src: '/Hotel-Interiors/noprea-hotel-lounge-nile-view.jpg', title: 'Lounge Nile View' },
-        { src: '/Hotel-Interiors/noprea-hotel-exterior-nubian-architecture.jpg', title: 'Exterior Nubian Architecture' },
-        { src: '/Hotel-Interiors/noprea-hotel-courtyard-entrance.jpg', title: 'Courtyard Entrance' },
-        { src: '/Guest-Spaces/noprea-one-bed-room-courtyard-view.jpg', title: 'Courtyard Suite' },
-        { src: '/Guest-Spaces/noprea-room-bed-close-up.avif', title: 'Room Details' },
-        { src: '/Guest-Spaces/noprea-room-window-nile-view.avif', title: 'Panoramic Window' },
-        { src: '/Guest-Spaces/noprea-two-bed-room-courtyard-view-angle-1.avif', title: 'Twin Room' },
-        { src: '/Guest-Spaces/noprea-room-window-nile-view-day.jpg', title: 'Daylight View' },
-        { src: '/Guest-Spaces/noprea-room-window-nile-view-sunset.avif', title: 'Sunset from Room' },
-        { src: '/Guest-Spaces/noprea-two-bed-room.avif', title: 'Comfort Twin Room' },
-        { src: '/Guest-Spaces/noprea-room-doorway-nile-view.avif', title: 'Nile View Doorway' },
-        { src: '/Guest-Spaces/noprea-room-terrace-nile-view.avif', title: 'Private Terrace' },
-      ]
-    },
-    {
-      id: 'dining',
-      title: 'Riverside Dining',
-      description: 'Experience farm-to-table cuisine and authentic Nubian flavours.',
-      coverImage: '/Dining/noprea-boutique-hotel-restaurant-aswan.jpg',
-      images: [
-        { src: '/Dining/noprea-nile-view-dining-room-aswan.jpg', title: 'Indoor Dining Room' },
-        { src: '/Dining/noprea-open-air-restaurant-nile-view-aswan.jpg', title: 'Open Air Restaurant' },
-        { src: '/Dining/noprea-boutique-hotel-restaurant-aswan.jpg', title: 'Restaurant Setup' },
-        { src: '/Farm-to-Table Experiences/organic-local-breakfast-aswan-nile-view.avif', title: 'Organic Breakfast' },
-        { src: '/Farm-to-Table Experiences/noprea-oriental-breakfast-aswan.avif', title: 'Oriental Breakfast' },
-      ]
-    },
-    {
-      id: 'heritage',
-      title: 'Heritage & Nature',
-      description: 'Discover Haissa Island\'s culture, architecture, and breathtaking Nile sunsets.',
-      coverImage: '/Nubian-Architecture /nubian-village-entrance-aswan.avif',
-      images: [
-        { src: '/Nile-Views/nile-sunset-boat-aswan.avif', title: 'Nile Sunset Boat' },
-        { src: '/Sunrise-and-Sunset/golden-hour-nile-reflection-aswan.avif', title: 'Golden Hour Reflection' },
-        { src: '/Sunrise-and-Sunset/sunrise-through-nubian-arch-aswan.avif', title: 'Sunrise through Arch' },
-        { src: '/Nubian-Architecture /colorful-nubian-wall-art-aswan.avif', title: 'Colorful Wall Art' },
-        { src: '/Nubian-Architecture /white-nubian-house-details-aswan.avif', title: 'Nubian Architecture' },
-        { src: '/Nubian-Architecture /traditional-nubian-rugs-aswan-2.avif', title: 'Traditional Rugs' },
-        { src: '/Nubian-Architecture /nubian-local-by-the-nile-aswan.avif', title: 'Local Life by the Nile' },
-        { src: '/Nubian-Architecture /nubian-village-entrance-aswan.avif', title: 'Village Entrance' },
-        { src: '/Haissa-Island/haissa-island-feluccas-nile.avif.avif', title: 'Feluccas on the Nile' },
-        { src: '/Nile-Views/walking-by-the-nile-river-view-aswan.avif', title: 'Walking by the River' },
-      ]
-    },
-    {
-      id: 'retreats',
-      title: 'Seasonal Retreats',
-      description: 'Find balance and restoration through our curated well-being programs and yoga sessions.',
-      coverImage: '/Nature/noprea-yoga-by-the-nile-relax.avif',
-      images: [
-        { src: '/Nature/noprea-yoga-by-the-nile-relax.avif', title: 'Yoga by the Nile' },
-        { src: '/Nature/noprea-yoga-by-the-nile-relax-angle-1.avif', title: 'Morning Stretch' },
-        { src: '/Nature/noprea-yoga-by-the-nile-relax-angle-2.avif', title: 'Mindfulness Practice' },
-        { src: '/Nature/noprea-yoga-by-the-nile-relax-angle-3.avif', title: 'Sunset Yoga' },
-        { src: '/Nature/noprea-yoga-by-the-nile-relax-angle-4.avif', title: 'Restoration' },
-      ]
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        const { data } = await fetchGallery();
+        setAlbums(data);
+      } catch (error) {
+        console.error("Failed to load gallery", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadGallery();
+  }, []);
+
+  const openLightbox = (album: any) => {
+    if (album.images && album.images.length > 0) {
+      setSelectedAlbum(album);
+      setLightboxIndex(0);
     }
-  ];
-
-  const currentAlbumData = albums.find(a => a.id === activeAlbum);
-
-  const openLightbox = (albumId: string) => {
-    setActiveAlbum(albumId);
-    setLightboxIndex(0);
   };
 
   const closeLightbox = () => {
-    setActiveAlbum(null);
+    setSelectedAlbum(null);
+    setLightboxIndex(0);
   };
 
   const handlePrev = () => {
-    if (!currentAlbumData) return;
-    setLightboxIndex((prev) => (prev === 0 ? currentAlbumData.images.length - 1 : prev - 1));
+    if (!selectedAlbum) return;
+    const total = selectedAlbum.images.length;
+    setLightboxIndex((prev) => (prev === 0 ? total - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    if (!currentAlbumData) return;
-    setLightboxIndex((prev) => (prev === currentAlbumData.images.length - 1 ? 0 : prev + 1));
+    if (!selectedAlbum) return;
+    const total = selectedAlbum.images.length;
+    setLightboxIndex((prev) => (prev + 1) % total);
   };
 
   return (
-    <section id="gallery" className="py-10 bg-warm-white relative overflow-hidden">
+    <section id="gallery" className="pt-12 md:pt-16 pb-24 bg-warm-white relative overflow-hidden">
       <div className="absolute right-0 bottom-0 w-96 h-96 bg-clay/5 rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -124,86 +68,98 @@ export default function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {albums.map((album) => (
-            <div
-              key={album.id}
-              onClick={() => openLightbox(album.id)}
-              className="group relative h-[350px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl cursor-pointer bg-charcoal border border-clay/10 transition-all duration-500 hover:-translate-y-1.5"
-            >
-              <img
-                src={album.coverImage}
-                alt={album.title}
-                loading="lazy"
-                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              
-              <div className="absolute top-6 right-6 flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-xs font-semibold">
-                <Layers className="w-4 h-4" />
-                <span>{album.images.length} Photos</span>
-              </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-10">
+             <div className="w-8 h-8 border-2 border-clay border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : albums.length === 0 ? (
+          <p className="text-center text-gray-500">No collections available yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {albums.map((album) => {
+              const cover = album.coverImage?.startsWith('/uploads') ? `${BACKEND_URL}${album.coverImage}` : album.coverImage;
+              const photoCount = album.images?.length || 0;
 
-              <div className="absolute bottom-6 left-6 right-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className="font-serif text-2xl font-medium leading-tight mb-2">
-                  {album.title}
-                </h3>
-                <p className="text-sm text-white/80 font-light line-clamp-2">
-                  {album.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+              return (
+                <div
+                  key={album._id}
+                  onClick={() => openLightbox(album)}
+                  className="group relative h-[350px] md:h-[450px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer bg-charcoal transition-all duration-500 hover:-translate-y-1 border border-clay/10"
+                >
+                  <img 
+                    src={cover} 
+                    alt={album.title} 
+                    referrerPolicy="no-referrer" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+                  
+                  <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white flex items-center gap-2 text-xs font-medium">
+                    <Layers className="w-4 h-4" />
+                    <span>{photoCount} Photos</span>
+                  </div>
+
+                  <div className="absolute bottom-8 left-8 right-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 className="font-serif text-2xl md:text-3xl font-medium mb-2">
+                      {album.title}
+                    </h3>
+                    <p className="text-sm text-white/80 font-light line-clamp-2">
+                      {album.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {activeAlbum && currentAlbumData && (
-        <div className="fixed inset-0 z-50 bg-charcoal/95 backdrop-blur-md flex flex-col justify-between items-center py-6 px-4 animate-fade-in">
-          <div className="w-full max-w-7xl flex justify-between items-center text-white z-10">
-            <div className="flex flex-col">
-              <span className="text-[10px] tracking-widest uppercase text-warm-sand font-bold mb-1">
-                {currentAlbumData.title} Collection
-              </span>
-              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/70">
-                <ImageIcon className="w-4 h-4" />
-                <span>{lightboxIndex + 1} / {currentAlbumData.images.length}</span>
-              </div>
+      {selectedAlbum && selectedAlbum.images && selectedAlbum.images.length > 0 && (
+        <div className="fixed inset-0 z-[99999] bg-[#0a0a0a] flex flex-col justify-between items-center animate-fade-in select-none">
+          
+          <div className="absolute top-0 inset-x-0 w-full p-6 flex justify-between items-center text-white z-50 bg-gradient-to-b from-black/80 to-transparent">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-warm-sand font-semibold">
+              <ImageIcon className="w-4 h-4" />
+              <span>{lightboxIndex + 1} / {selectedAlbum.images.length}</span>
             </div>
-            <button
-              onClick={closeLightbox}
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+            <button 
+              onClick={closeLightbox} 
+              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer backdrop-blur-md"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="relative flex-1 w-full max-w-5xl flex items-center justify-center">
-            <button
-              onClick={handlePrev}
-              className="absolute left-2 md:-left-16 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-10"
+          <div className="relative w-full h-full flex items-center justify-center">
+            
+            <button 
+              onClick={(e) => { e.stopPropagation(); handlePrev(); }} 
+              className="absolute left-4 md:left-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
 
-            <div className="relative max-h-[70vh] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-              <img
-                src={currentAlbumData.images[lightboxIndex].src}
-                alt={currentAlbumData.images[lightboxIndex].title}
-                className="max-h-[70vh] max-w-full object-contain mx-auto transition-opacity duration-300"
-              />
-            </div>
+            <img 
+              src={selectedAlbum.images[lightboxIndex].src.startsWith('/uploads') ? `${BACKEND_URL}${selectedAlbum.images[lightboxIndex].src}` : selectedAlbum.images[lightboxIndex].src} 
+              alt={selectedAlbum.images[lightboxIndex].title} 
+              referrerPolicy="no-referrer" 
+              className="max-h-screen max-w-full object-contain mx-auto w-full h-full p-0 md:p-12 transition-transform duration-300" 
+            />
 
-            <button
-              onClick={handleNext}
-              className="absolute right-2 md:-right-16 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-10"
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleNext(); }} 
+              className="absolute right-4 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>
           </div>
 
-          <div className="w-full text-center text-white z-10 max-w-xl">
-            <p className="font-serif text-xl font-medium tracking-wide">
-              {currentAlbumData.images[lightboxIndex].title}
+          <div className="absolute bottom-0 inset-x-0 w-full p-8 text-center text-white z-50 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-sand font-bold block mb-2">
+              {selectedAlbum.title}
+            </span>
+            <p className="font-serif text-xl md:text-2xl font-light tracking-wide text-white/90">
+              {selectedAlbum.images[lightboxIndex].title || selectedAlbum.title}
             </p>
           </div>
         </div>

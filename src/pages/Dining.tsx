@@ -4,14 +4,17 @@ import { Utensils, Leaf, Wine, ArrowRight } from 'lucide-react';
 export default function Dining() {
   return (
     <main className="bg-warm-white min-h-screen">
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* 🟢 لغينا التوسيط وحطينا justify-start والبادنج الموحد */}
+      <section className="relative h-[70vh] flex flex-col items-center justify-start overflow-hidden pt-[160px] md:pt-[192px]">
         <img 
           src="/Dining/noprea-boutique-hotel-restaurant-aswan.jpg" 
           alt="Riverside Dining at NOPREA" 
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 text-center px-6 mt-16">
+        
+        {/* 🟢 شيلنا الـ mt من هنا */}
+        <div className="relative z-10 text-center px-6">
           <span className="text-xs font-semibold uppercase tracking-[0.3em] text-warm-sand block mb-3">
             CULINARY JOURNEY
           </span>

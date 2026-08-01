@@ -34,7 +34,6 @@ export default function ReviewCarousel({ reviews }: ReviewCarouselProps) {
   const currentReview = reviews[activeIndex];
 
   return (
-    // تم تقليل הـ padding هنا من py-20 إلى py-12 لتقليل المسافة السفلية بينه وبين قسم الجاليري
     <section className="py-12 px-6 max-w-[80rem] mx-auto">
       <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         
@@ -64,19 +63,16 @@ export default function ReviewCarousel({ reviews }: ReviewCarouselProps) {
 
           <div className="relative z-10 flex justify-between items-start w-full">
             <div className="flex items-center gap-1.5 pt-1">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(currentReview.rating || 5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 text-[#C28C7E] fill-current" />
               ))}
             </div>
-            <a 
-              href="https://www.booking.com/hotel/eg/noprea-boutique-aswan1.html" 
-              target="_blank" 
-              rel="noreferrer"
-              className="flex items-center gap-2 text-[10px] tracking-widest uppercase font-semibold text-white/90 bg-white/5 px-4 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-colors cursor-pointer"
-            >
+            
+            {/* 🟢 مصدر التقييم بقى دايناميك هنا */}
+            <div className="flex items-center gap-2 text-[10px] tracking-widest uppercase font-semibold text-white/90 bg-white/5 px-4 py-2 rounded-full border border-white/20">
               <Shield className="w-3.5 h-3.5" />
-              <span>Booking.com Review</span>
-            </a>
+              <span>{currentReview.source || 'Booking.com'} Review</span>
+            </div>
           </div>
 
           <div className="relative z-10 my-10 flex-1 flex flex-col justify-center">

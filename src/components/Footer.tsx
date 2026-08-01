@@ -7,23 +7,20 @@ export default function Footer() {
   const [success, setSuccess] = useState(false);
   const [logoError, setLogoError] = useState(false);
 
+  // 🟢 اللينكات اتمسحت من الداتا عشان متبقاش Clickable
   const partners = [
-    { name: 'Booking.com', src: '/Partners/Booking.com - Logo.png', link: 'https://www.booking.com/hotel/eg/noprea-boutique-aswan1.html' },
-    { name: 'TripAdvisor', src: '/Partners/Trip Advisor - Logo.png', link: 'https://www.tripadvisor.com/Hotel_Review-g303856-d25233516-Reviews-Noprea_Boutique_Hotel-Philae_Aswan_Governorate_Nile_River_Valley.html' },
-    { name: 'Expedia', src: '/Partners/Expedia - Logo.png', link: 'https://en.planetofhotels.com/egypt/aswan/noprea-boutique-hotel' },
-    { name: 'Google', src: '/Partners/Google - Logo.png', link: 'https://www.google.com/travel/hotels/entity/CholmqzI0Pyp9_roARONL2cvMTFzY3QwMWY3XxAB/reviews' },
-    { name: 'Airbnb', src: '/Partners/Airbnb - Logo.png', link: '' },
-    { name: 'Agoda', src: '/Partners/Agoda-Logo-Cropped.png', link: '' },
-    { name: 'Little Hotelier', src: '/Partners/little-hotelier-logo.png', link: '' },
+    { name: 'Booking.com', src: '/Partners/Booking.com - Logo.png' },
+    { name: 'TripAdvisor', src: '/Partners/Trip Advisor - Logo.png' },
+    { name: 'Expedia', src: '/Partners/Expedia - Logo.png' },
+    { name: 'Google', src: '/Partners/Google - Logo.png' },
+    { name: 'Airbnb', src: '/Partners/Airbnb - Logo.png' },
+    { name: 'Agoda', src: '/Partners/Agoda-Logo-Cropped.png' },
+    { name: 'Little Hotelier', src: '/Partners/little-hotelier-logo.png' },
   ];
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
-    // TODO: Connect this to backend API to save in database and trigger email to visitaswan@nopreahotel.com
-    console.log(`Subscribing email: ${email} to newsletter (Will send to backend & notify visitaswan@nopreahotel.com)`);
-    
     setSuccess(true);
     setEmail('');
     setTimeout(() => setSuccess(false), 5000);
@@ -43,7 +40,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#333333] text-white pb-10 border-t border-white/5 relative overflow-hidden w-full">
-      
       <style>
         {`
           @keyframes infinite-scroll {
@@ -61,7 +57,6 @@ export default function Footer() {
         `}
       </style>
 
-      {/* شريط الشركاء (Infinity Loop) */}
       <div className="bg-[#E5E0D8] py-8 overflow-hidden relative border-b border-black/10 w-full mb-16">
         <div className="text-center mb-6">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#2C2C2C]/60 font-bold">
@@ -70,51 +65,31 @@ export default function Footer() {
         </div>
         
         <div className="relative w-full max-w-full overflow-hidden">
-          {/* تدرج لوني على الأطراف لعمل تأثير التلاشي */}
           <div className="absolute left-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-r from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
           
           <div className="flex overflow-hidden group">
             <div className="animate-infinite-scroll">
-              
-              {/* البلوك الأول (يحمل نسختين من اللوجوهات) */}
               <div className="flex items-center gap-12 md:gap-16 px-6 md:px-8 shrink-0">
                 {[...partners, ...partners].map((partner, idx) => (
-                  partner.link ? (
-                    <a key={`block1-${idx}`} href={partner.link} aria-label={`Visit our page on ${partner.name}`} target="_blank" rel="noopener noreferrer" className="block shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
-                    </a>
-                  ) : (
-                    <div key={`block1-${idx}`} className="shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
-                    </div>
-                  )
+                  // 🟢 تم استبدال a بـ div وإزالة الـ cursor-pointer
+                  <div key={`block1-${idx}`} className="shrink-0 flex items-center">
+                    <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 drop-shadow-sm" />
+                  </div>
                 ))}
               </div>
-
-              {/* البلوك الثاني (تطابق تام للبلوك الأول عشان الـ Loop يكون مثالي) */}
               <div className="flex items-center gap-12 md:gap-16 px-6 md:px-8 shrink-0">
                 {[...partners, ...partners].map((partner, idx) => (
-                  partner.link ? (
-                    <a key={`block2-${idx}`} href={partner.link} aria-label={`Visit our page on ${partner.name}`} target="_blank" rel="noopener noreferrer" className="block shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
-                    </a>
-                  ) : (
-                    <div key={`block2-${idx}`} className="shrink-0 flex items-center">
-                      <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-sm" />
-                    </div>
-                  )
+                  <div key={`block2-${idx}`} className="shrink-0 flex items-center">
+                    <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 drop-shadow-sm" />
+                  </div>
                 ))}
               </div>
-
             </div>
           </div>
-
-          {/* تدرج لوني على الأطراف لعمل تأثير التلاشي */}
           <div className="absolute right-0 top-0 bottom-0 w-8 md:w-16 bg-gradient-to-l from-[#E5E0D8] to-transparent z-10 pointer-events-none" />
         </div>
       </div>
 
-      {/* حاوية محكمة لمنع التمدد في الشاشات الكبيرة */}
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10 items-start">
           
@@ -161,7 +136,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.map((link, idx) => (
                 <li key={idx}>
-                  <Link to={link.path} className="text-xs text-white/70 hover:text-[#E5D3B3] font-light flex items-center gap-1.5">
+                  <Link to={link.path} onClick={scrollToTop} className="text-xs text-white/70 hover:text-[#E5D3B3] font-light flex items-center gap-1.5">
                     <ArrowRight className="w-3 h-3 text-[#B78C74]" /> {link.name}
                   </Link>
                 </li>

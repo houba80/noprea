@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Compass, Menu, X } from 'lucide-react';
 
+// 🟢 خلينا الـ props اختيارية بعلامة ؟ عشان الكود يبقى Bulletproof
 interface NavbarProps {
-  onNavClick: () => void;
-  activeSection: string;
+  onNavClick?: () => void;
+  activeSection?: string;
 }
 
 export default function Navbar({ onNavClick, activeSection }: NavbarProps) {
@@ -12,6 +13,7 @@ export default function Navbar({ onNavClick, activeSection }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
 
+  // 🟢 ضفنا About هنا عشان تظهر في المينيو للناس
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Stay', path: '/stay' },
@@ -19,7 +21,13 @@ export default function Navbar({ onNavClick, activeSection }: NavbarProps) {
     { name: 'Experiences', path: '/experiences' },
     { name: 'Retreats', path: '/retreats' },
     { name: 'Gallery', path: '/gallery' },
+    { name: 'About', path: '/about' }, 
   ];
+
+  const handleNavClick = () => {
+    if (onNavClick) onNavClick();
+    setMobileMenuOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-charcoal/95 backdrop-blur-md border-b border-white/5 text-white transition-all duration-300">
@@ -50,7 +58,7 @@ export default function Navbar({ onNavClick, activeSection }: NavbarProps) {
               <Link
                 key={idx}
                 to={link.path}
-                onClick={onNavClick}
+                onClick={handleNavClick}
                 className={`cursor-pointer text-xs uppercase tracking-[0.2em] font-medium transition-colors hover:text-warm-sand relative py-2 ${
                   isActive ? 'text-warm-sand' : 'text-white/80'
                 }`}
@@ -91,7 +99,7 @@ export default function Navbar({ onNavClick, activeSection }: NavbarProps) {
             <Link
               key={idx}
               to={link.path}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={handleNavClick}
               className="text-sm uppercase tracking-widest text-white/90 hover:text-warm-sand transition-colors block py-1"
             >
               {link.name}

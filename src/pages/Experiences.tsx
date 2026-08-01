@@ -1,14 +1,8 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useEffect } from 'react';
 
 export default function Experiences() {
   useEffect(() => {
     document.title = "Experiences | NOPREA Boutique Hotel";
-    window.scrollTo(0, 0);
   }, []);
 
   const experiencesList = [
@@ -35,15 +29,17 @@ export default function Experiences() {
   ];
 
   return (
-    <main className="min-h-screen bg-warm-white pt-32 pb-24">
-      <div className="max-w-4xl mx-auto px-6 text-center mb-20">
-        <span className="text-[10px] uppercase tracking-[0.25em] font-semibold text-clay block mb-4">
-          NOPREA Island Experience
+    <main className="min-h-screen bg-warm-white pt-[160px] md:pt-[192px] pb-24">
+      {/* 🟢 التعديل هنا: توحيد الخطوط والمسافات وإضافة الخط الفاصل زي باقي الصفحات */}
+      <div className="max-w-2xl mx-auto px-6 text-center mb-16">
+        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-clay block mb-3">
+          NOPREA ISLAND EXPERIENCE
         </span>
-        <h1 className="font-serif text-4xl sm:text-6xl text-charcoal mb-6">
+        <h1 className="font-serif text-4xl sm:text-5xl font-normal text-charcoal mb-4">
           Beyond Accommodation
         </h1>
-        <p className="text-sm sm:text-base text-charcoal/70 leading-relaxed font-light">
+        <div className="w-12 h-[2px] bg-clay mx-auto mb-6" />
+        <p className="text-sm text-charcoal/80 font-light leading-relaxed">
           Your stay at NOPREA is an invitation to slow down and connect. Whether you are exploring ancient temples or enjoying the gentle breeze on a private felucca, every moment is thoughtfully curated to reflect the spirit of Haissa Island.
         </p>
       </div>

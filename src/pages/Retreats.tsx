@@ -1,26 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Leaf, Sun, Wind, CheckCircle, ArrowRight } from 'lucide-react';
+import { fetchRetreats } from '../api/index'; 
 
 export default function Retreats() {
+  const [retreatDates, setRetreatDates] = useState<any[]>([]);
+
   useEffect(() => {
     document.title = "Seasonal Well-Being Retreats | NOPREA Boutique Hotel";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute("content", "Join our Seasonal Well-Being Retreats on Haissa Island. Science-backed programs for personal renewal and balance, complementing your boutique hotel stay.");
     }
-  }, []);
 
-  const retreatDates = [
-    { name: 'Autumn Equinox 2026', date: '18 – 25 September', icon: '🍂' },
-    { name: 'Winter Solstice 2026', date: '18 – 25 December', icon: '❄️' },
-    { name: 'Spring Equinox 2027', date: '18 – 25 March', icon: '🌱' },
-    { name: 'Summer Solstice 2027', date: '18 – 25 June', icon: '☀️' },
-    { name: 'Autumn Equinox 2027', date: '18 – 25 September', icon: '🍂' },
-  ];
+    const loadRetreats = async () => {
+      try {
+        const { data } = await fetchRetreats();
+        setRetreatDates(data);
+      } catch (error) {
+        console.error('Failed to load retreats');
+      }
+    };
+    loadRetreats();
+  }, []);
 
   return (
     <main className="bg-[#F9F8F6]">
-      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* 🟢 لغينا التوسيط وحطينا justify-start والبادنج الموحد */}
+      <section className="relative h-[70vh] flex flex-col items-center justify-start overflow-hidden pt-[160px] md:pt-[192px]">
         <div className="absolute inset-0">
           <img 
             src="/Sunrise-and-Sunset/golden-hour-nile-reflection-aswan.avif" 
@@ -31,7 +37,8 @@ export default function Retreats() {
           <div className="absolute inset-0 bg-black/30" />
         </div>
         
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto mt-20">
+        {/* 🟢 شيلنا الـ mt من هنا */}
+        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-white mb-6 leading-tight">
             Seasonal Well-Being Retreats
           </h1>
@@ -55,15 +62,19 @@ export default function Retreats() {
           </p>
 
           <div className="flex flex-col gap-4 max-w-2xl mx-auto mb-10 text-left">
-            {retreatDates.map((retreat, idx) => (
-              <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-5 rounded-xl bg-[#F9F8F6] border border-[#E5E0D8] hover:border-[#C28C7E] transition-colors">
-                <div className="flex items-center gap-4 mb-2 sm:mb-0">
-                  <span className="text-2xl">{retreat.icon}</span>
-                  <span className="font-serif text-[#2C2C2C] text-xl">{retreat.name}</span>
+            {retreatDates.length === 0 ? (
+              <p className="text-center text-gray-400">Loading upcoming dates...</p>
+            ) : (
+              retreatDates.map((retreat, idx) => (
+                <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-5 rounded-xl bg-[#F9F8F6] border border-[#E5E0D8] hover:border-[#C28C7E] transition-colors">
+                  <div className="flex items-center gap-4 mb-2 sm:mb-0">
+                    <span className="text-2xl">{retreat.icon}</span>
+                    <span className="font-serif text-[#2C2C2C] text-xl">{retreat.name}</span>
+                  </div>
+                  <span className="text-[#C28C7E] font-medium tracking-widest uppercase text-sm">{retreat.date}</span>
                 </div>
-                <span className="text-[#C28C7E] font-medium tracking-widest uppercase text-sm">{retreat.date}</span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <a 
@@ -118,7 +129,6 @@ export default function Retreats() {
         </div>
       </section>
 
-      {/* 🌟 تم ضبط أحجام الشعارين ليكون الارتفاع متوازناً وبصرياً متساوياً */}
       <section className="py-16 bg-white border-t border-[#E5E0D8]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium mb-12">In Collaboration With</p>
