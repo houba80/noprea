@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// 🟢 السطر السحري: هيشتغل لوحده على اللوكال هوست، وعلى التيست، وعلى الدومين الأساسي!
-const BACKEND_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
+// 🟢 التعديل الجديد: لو على جهازك هيكلم 5000، لو على السيرفر هيكلم الدومين الجديد بتاع الباك إند
+const BACKEND_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.nopreahotel.com'; // 👈 حطينا رابط الـ API المخصوص
 
 const API = axios.create({
   baseURL: `${BACKEND_URL}/api`, 

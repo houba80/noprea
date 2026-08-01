@@ -139,7 +139,9 @@ export default function RoomsManager() {
   };
 
   // 🟢 السطر السحري لمسار الصور الديناميكي
-  const BACKEND_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
+  const BACKEND_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000' 
+    : 'https://api.nopreahotel.com';
   const getImageUrl = (url: string) => url?.startsWith('/uploads') ? `${BACKEND_URL}${url}` : url;
   
   const displayAmenities = Array.from(new Set([...DEFAULT_AMENITIES, ...formData.features]));

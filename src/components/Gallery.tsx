@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Layers, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { fetchGallery } from '../api/index';
 
-// 🟢 السطر السحري لمسار الصور الديناميكي
-const BACKEND_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
+import axios from 'axios';
+
+// 🟢 التعديل الجديد: لو على جهازك هيكلم 5000، لو على السيرفر هيكلم الدومين الجديد بتاع الباك إند
+const BACKEND_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.nopreahotel.com'; // 👈 حطينا رابط الـ API المخصوص
+
+const API = axios.create({
+  baseURL: `${BACKEND_URL}/api`, 
+});
 
 export default function Gallery() {
   const [albums, setAlbums] = useState<any[]>([]);
