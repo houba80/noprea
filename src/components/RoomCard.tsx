@@ -1,40 +1,41 @@
 import React, { useState } from 'react';
-import { Maximize2, X, Users, Maximize, BedDouble, Eye } from 'lucide-react';
+import { Maximize2, X, Wifi, Maximize } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const BACKEND_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.nopreahotel.com';
 
 export default function RoomCard({ room }: { room: any }) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  // 🟢 استدعاء الصورة
-  const coverImage = room.coverImage || room.image || '/placeholder-room.jpg';
+  // 🟢 استدعاء الصورة بالرابط الديناميكي
+  const rawImage = room.coverImage || room.image || '/placeholder-room.jpg';
+  const coverImage = rawImage.startsWith('/uploads') ? `${BACKEND_URL}${rawImage}` : rawImage;
 
-  // 🟢 تجهيز الداتا الافتراضية من ملف الـ Overview لو مش موجودة في الداتابيز
-  const size = room.size || '32 sqm';
-  const occupancy = room.occupancy || 'Up to 2 Guests';
-  const bed = room.bedConfiguration || '1 Queen & 1 Twin';
+  // 🟢 تجهيز الداتا الافتراضية
   const view = room.view || (room.title?.toLowerCase().includes('nile') ? 'Nile View' : 'Garden Courtyard');
+  const type = room.type || 'Room';
   
   const defaultAmenities = ['Air Conditioning', 'Bathtub', 'Complimentary WiFi', 'Daily Housekeeping', 'Private Terrace'];
-  const amenities = room.amenities && room.amenities.length > 0 ? room.amenities : defaultAmenities;
+  const amenities = room.features || room.amenities || defaultAmenities;
   
   const description = room.description || "Combining authentic Nubian architecture with modern comfort, offering a perfect setting for a relaxing stay.";
-  
-  // السعر الافتراضي بدل "Price on request" المستفزة
-  const price = room.price || 120; 
+  const priceInfo = room.priceInfo || (room.price ? `From $${room.price}/night` : 'Price on request'); 
 
   return (
     <>
-      <div className="group flex flex-col bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-clay/10 h-full">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col group cursor-pointer h-full">
         
         {/* مساحة الصورة والـ Lightbox */}
         <div 
-          className="relative h-64 md:h-[320px] w-full overflow-hidden cursor-pointer"
+          className="relative h-64 overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
           onClick={() => setIsLightboxOpen(true)}
         >
           <img 
             src={coverImage} 
-            alt={room.title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            alt={room.title || room.name} 
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
           />
           
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -42,67 +43,43 @@ export default function RoomCard({ room }: { room: any }) {
               <Maximize2 className="w-6 h-6" />
             </div>
           </div>
-
-          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-charcoal shadow-sm">
-            ROOM • {view.toUpperCase()}
-          </div>
         </div>
 
-        {/* محتوى الكارت */}
-        <div className="p-6 md:p-8 flex flex-col flex-grow">
-          <h3 className="font-serif text-2xl md:text-3xl text-charcoal mb-3 leading-tight">{room.title}</h3>
-          <p className="text-sm text-charcoal/70 font-light mb-6 line-clamp-2 leading-relaxed">
+        {/* محتوى الكارت (الشكل القديم اللي طلبته) */}
+        <div className="p-6 flex flex-col flex-1">
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-clay block mb-1">{type} • {view}</span>
+              <h3 className="font-serif text-2xl text-charcoal">{room.title || room.name}</h3>
+            </div>
+          </div>
+          
+          {/* 🟢 الوصف كامل بدون قص */}
+          <p className="text-sm text-gray-500 mb-4 leading-relaxed">
             {description}
           </p>
 
-          {/* 🟢 تفاصيل الغرفة الأساسية (بناءً على ملف الـ Overview) بأيقونات شيك */}
-          <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100">
-            <div className="flex items-center gap-2 text-charcoal/80">
-              <Maximize className="w-4 h-4 text-clay" />
-              <span className="text-xs font-medium">{size}</span>
-            </div>
-            <div className="flex items-center gap-2 text-charcoal/80">
-              <Users className="w-4 h-4 text-clay" />
-              <span className="text-xs font-medium">{occupancy}</span>
-            </div>
-            <div className="flex items-center gap-2 text-charcoal/80">
-              <BedDouble className="w-4 h-4 text-clay" />
-              <span className="text-xs font-medium truncate" title={bed}>{bed}</span>
-            </div>
-            <div className="flex items-center gap-2 text-charcoal/80">
-              <Eye className="w-4 h-4 text-clay" />
-              <span className="text-xs font-medium truncate">{view}</span>
-            </div>
-          </div>
-
-          {/* 🟢 المميزات (Amenities) زي الصورة اللي بعتها */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {amenities.slice(0, 6).map((am: string, index: number) => (
-              <span 
-                key={index} 
-                className="text-[10px] font-semibold uppercase tracking-wider text-charcoal/70 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-100"
-              >
-                {am}
+          {/* 🟢 جميع المميزات تظهر بالكامل */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {amenities.map((feature: string, idx: number) => (
+              <span key={idx} className="text-[11px] font-semibold bg-gray-50 border border-gray-100 text-gray-600 px-2 py-1 rounded flex items-center gap-1">
+                {feature.toLowerCase().includes('wifi') && <Wifi className="w-3 h-3" />}
+                {feature.toLowerCase().includes('view') && <Maximize className="w-3 h-3" />}
+                {feature}
               </span>
             ))}
           </div>
 
-          {/* الفوتر: السعر وزرار الحجز */}
-          <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="text-xl font-serif text-charcoal">
-              From ${price} <span className="text-xs font-sans text-gray-400 uppercase tracking-widest">/night</span>
-            </div>
-            <Link 
-              to="/book" 
-              className="w-full sm:w-auto text-center bg-charcoal text-white px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-black transition-colors"
-            >
+          <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+            <span className="text-lg font-serif text-charcoal">{priceInfo}</span>
+            <Link to="/book" className="bg-charcoal text-white text-sm font-bold px-6 py-2 rounded hover:bg-black transition-colors">
               Discover
             </Link>
           </div>
         </div>
       </div>
 
-      {/* الـ Lightbox السينمائي لصورة الغرفة */}
+      {/* الـ Lightbox */}
       {isLightboxOpen && (
         <div 
           className="fixed inset-0 z-[99999] bg-[#0a0a0a]/95 backdrop-blur-sm flex items-center justify-center animate-fade-in p-4 md:p-12"
@@ -117,7 +94,7 @@ export default function RoomCard({ room }: { room: any }) {
           
           <img 
             src={coverImage} 
-            alt={room.title} 
+            alt={room.title || room.name} 
             className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()} 
           />

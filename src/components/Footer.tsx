@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, ArrowRight, Instagram, Facebook, Phone, Heart, Send, MapPin, MessageCircle, Linkedin } from 'lucide-react';
+import { Mail, ArrowRight, Instagram, Facebook, Phone, Heart, Send, MapPin, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
   const [logoError, setLogoError] = useState(false);
 
-  // 🟢 اللينكات اتمسحت من الداتا عشان متبقاش Clickable
   const partners = [
     { name: 'Booking.com', src: '/Partners/Booking.com - Logo.png' },
     { name: 'TripAdvisor', src: '/Partners/Trip Advisor - Logo.png' },
@@ -71,7 +70,6 @@ export default function Footer() {
             <div className="animate-infinite-scroll">
               <div className="flex items-center gap-12 md:gap-16 px-6 md:px-8 shrink-0">
                 {[...partners, ...partners].map((partner, idx) => (
-                  // 🟢 تم استبدال a بـ div وإزالة الـ cursor-pointer
                   <div key={`block1-${idx}`} className="shrink-0 flex items-center">
                     <img src={partner.src} alt={partner.name} width="120" height="40" className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-110 drop-shadow-sm" />
                   </div>
@@ -190,8 +188,10 @@ export default function Footer() {
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-[11px] text-white/55 space-y-4 md:space-y-0">
           <div>&copy; {new Date().getFullYear()} NOPREA Boutique Hotel. All Rights Reserved.</div>
           <div className="flex items-center gap-1"><Heart className="w-3 h-3 text-[#C28C7E] fill-current" /> Celebrating Nubian Heritage</div>
+          {/* 🟢 تم تغيير الاسم هنا لـ NOPREA's Overview */}
           <div className="flex space-x-6">
             <Link to="/terms-conditions" className="hover:text-white text-[#E5D3B3]">Terms &amp; Conditions</Link>
+            <Link to="/overview" onClick={scrollToTop} className="hover:text-white text-[#E5D3B3]">NOPREA's Overview</Link>
           </div>
         </div>
       </div>

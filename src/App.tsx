@@ -11,6 +11,7 @@ import GalleryPage from './pages/GalleryPage';
 import TermsConditions from './pages/TermsConditions';
 import BookingPage from './pages/BookingPage';
 import AboutPage from './pages/AboutPage';
+import Overview from './pages/Overview';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -40,6 +41,7 @@ const AppContent = () => {
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/book" element={<BookingPage />} />
         <Route path="/about" element={<AboutPage />} /> 
+        <Route path="/overview" element={<Overview />} />
 
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
