@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { ShieldCheck, HelpCircle, Phone } from 'lucide-react';
+// 🟢 استدعاء useLocation لقراءة مسار الصفحة
+import { useLocation } from 'react-router-dom';
 
 export default function BookingPage() {
+  const location = useLocation(); // 🟢 هيجيب الـ query من مسار الموقع زي ?items[0][rateId]=123456
+
   useEffect(() => {
     document.title = "Secure Reservation | NOPREA Boutique Hotel";
-    // مش محتاجين السكريبت بتاعهم هنا خلاص، الـ iframe هيقوم بالواجب
   }, []);
 
   return (
-    // 🟢 وحدنا البادنج العلوي عشان يطابق باقي الصفحات
     <main className="min-h-screen bg-warm-white pt-[160px] md:pt-[192px] pb-16 text-charcoal">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
@@ -24,18 +26,16 @@ export default function BookingPage() {
           </p>
         </div>
 
-        {/* 🟢 كبرنا المساحة شوية عشان الهيدر الجديد ياخد راحته */}
         <div className="bg-white rounded-3xl shadow-xl border border-clay/10 p-2 md:p-4 relative min-h-[850px] w-full flex flex-col">
           
-          {/* علامة التحميل اللي بتظهر لحد ما الـ iframe يفتح */}
           <div className="absolute inset-0 flex flex-col items-center justify-center -z-10 text-clay opacity-50">
              <div className="w-8 h-8 border-2 border-clay border-t-transparent rounded-full animate-spin mb-4" />
              <p className="text-xs uppercase tracking-widest font-medium">Connecting Secure Engine...</p>
           </div>
 
-          {/* 🟢 الحل الجذري: استخدام iframe مباشر للصفحة الكاملة */}
+          {/* 🟢 تم دمج مسار محرك الحجز مع الـ search parameters اللي جاية من اللينك */}
           <iframe 
-            src="https://direct-book.com/properties/nopreaboutiquehotelaswan" 
+            src={`https://direct-book.com/properties/nopreaboutiquehotelaswan${location.search}`}
             className="w-full flex-1 rounded-2xl z-10 bg-white"
             style={{ minHeight: '800px', border: 'none' }}
             title="NOPREA Secure Booking Engine"

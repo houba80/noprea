@@ -9,11 +9,9 @@ const BACKEND_URL = window.location.hostname === 'localhost'
 export default function RoomCard({ room }: { room: any }) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  // 🟢 استدعاء الصورة بالرابط الديناميكي
   const rawImage = room.coverImage || room.image || '/placeholder-room.jpg';
   const coverImage = rawImage.startsWith('/uploads') ? `${BACKEND_URL}${rawImage}` : rawImage;
 
-  // 🟢 تجهيز الداتا الافتراضية
   const view = room.view || (room.title?.toLowerCase().includes('nile') ? 'Nile View' : 'Garden Courtyard');
   const type = room.type || 'Room';
   
@@ -23,11 +21,27 @@ export default function RoomCard({ room }: { room: any }) {
   const description = room.description || "Combining authentic Nubian architecture with modern comfort, offering a perfect setting for a relaxing stay.";
   const priceInfo = room.priceInfo || (room.price ? `From $${room.price}/night` : 'Price on request'); 
 
+  // 🟢 اللوجيك الذكي لمعالجة لينك الحجز اللي العميل بيدخله
+  let bookingLink = "/book";
+  if (room.embedLink) {
+    try {
+      // لو العميل نسخ اللينك كامل من الموقع
+      const parsedUrl = new URL(room.embedLink);
+      if (parsedUrl.search) {
+        bookingLink = `/book${parsedUrl.search}`; // هياخد الجزء بتاع rateId بس
+      }
+    } catch (error) {
+      // احتياطي: لو العميل حط الجزء الأخير بس
+      if (room.embedLink.includes('?')) {
+        bookingLink = `/book${room.embedLink.substring(room.embedLink.indexOf('?'))}`;
+      }
+    }
+  }
+
   return (
     <>
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col group cursor-pointer h-full">
         
-        {/* مساحة الصورة والـ Lightbox */}
         <div 
           className="relative h-64 overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
           onClick={() => setIsLightboxOpen(true)}
@@ -45,7 +59,6 @@ export default function RoomCard({ room }: { room: any }) {
           </div>
         </div>
 
-        {/* محتوى الكارت (الشكل القديم اللي طلبته) */}
         <div className="p-6 flex flex-col flex-1">
           <div className="flex justify-between items-start mb-2">
             <div>
@@ -54,12 +67,10 @@ export default function RoomCard({ room }: { room: any }) {
             </div>
           </div>
           
-          {/* 🟢 الوصف كامل بدون قص */}
           <p className="text-sm text-gray-500 mb-4 leading-relaxed">
             {description}
           </p>
 
-          {/* 🟢 جميع المميزات تظهر بالكامل */}
           <div className="flex flex-wrap gap-2 mb-6">
             {amenities.map((feature: string, idx: number) => (
               <span key={idx} className="text-[11px] font-semibold bg-gray-50 border border-gray-100 text-gray-600 px-2 py-1 rounded flex items-center gap-1">
@@ -72,14 +83,14 @@ export default function RoomCard({ room }: { room: any }) {
 
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
             <span className="text-lg font-serif text-charcoal">{priceInfo}</span>
-            <Link to="/book" className="bg-charcoal text-white text-sm font-bold px-6 py-2 rounded hover:bg-black transition-colors">
+            {/* 🟢 استخدام اللينك الديناميكي اللي جهزناه فوق */}
+            <Link to={bookingLink} className="bg-charcoal text-white text-sm font-bold px-6 py-2 rounded hover:bg-black transition-colors">
               Discover
             </Link>
           </div>
         </div>
       </div>
 
-      {/* الـ Lightbox */}
       {isLightboxOpen && (
         <div 
           className="fixed inset-0 z-[99999] bg-[#0a0a0a]/95 backdrop-blur-sm flex items-center justify-center animate-fade-in p-4 md:p-12"
