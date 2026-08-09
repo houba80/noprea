@@ -10,9 +10,12 @@ export default function GalleryManager() {
   const [newAlbum, setNewAlbum] = useState({ title: '', description: '', coverImage: '', images: [] as any[] });
   const [editingAlbumId, setEditingAlbumId] = useState<string | null>(null);
 
-  // حالات فتح مكتبة الميديا
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [mediaTarget, setMediaTarget] = useState<'cover' | 'inner'>('cover');
+
+  const BACKEND_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000' 
+    : 'https://api.nopreahotel.com';
 
   const loadGallery = async () => {
     const { data } = await fetchGallery();
@@ -51,17 +54,14 @@ export default function GalleryManager() {
     });
   };
 
-  // 🟢 الحل الجذري الأكيد لتبديل الكوفر بدون أخطاء ريأكت
   const handleSetAsCover = (imgSrc: string, index: number) => {
     setNewAlbum(prev => {
       const oldCover = prev.coverImage; 
       let updatedImages = [...prev.images];
       
       if (oldCover) {
-        // لو فيه كوفر قديم، حطه مكان الصورة اللي ضغطنا عليها بالظبط
         updatedImages[index] = { ...updatedImages[index], src: oldCover, title: 'Previous Cover' };
       } else {
-        // لو مفيش كوفر (ألبوم جديد مثلاً)، امسح الصورة من تحت عشان بقت فوق
         updatedImages = updatedImages.filter((_, i) => i !== index);
       }
       
@@ -69,7 +69,6 @@ export default function GalleryManager() {
     });
   };
 
-  // استقبال الصور من الميديا مودال
   const handleMediaSelected = (selection: string | string[]) => {
     if (mediaTarget === 'cover' && typeof selection === 'string') {
       setNewAlbum(prev => ({ ...prev, coverImage: selection }));
@@ -85,7 +84,6 @@ export default function GalleryManager() {
     
     setLoading(true);
     try {
-      // 🟢 تنظيف الصور من أي _id قديم عشان MongoDB ما يعترضش
       const cleanedImages = newAlbum.images.map(img => ({
         src: img.src,
         title: img.title
@@ -96,7 +94,6 @@ export default function GalleryManager() {
       if (editingAlbumId) {
         await updateGalleryItem(editingAlbumId, payload);
         alert('✅ Category updated!');
-        // 🟢 فصلنا اللوج عشان لو فشل ما يوقفش الحفظ
         logActivity(`Edited Gallery Album: ${newAlbum.title}`).catch(err => console.log('Log Error:', err));
       } else {
         await createGalleryItem(payload);
@@ -109,7 +106,6 @@ export default function GalleryManager() {
       loadGallery();
     } catch (error: any) {
       console.error("Save Error:", error.response || error);
-      // 🟢 دلوقتي هيطلعلك الإيرور الحقيقي من الباك إند عشان نعرف المشكلة فين بالظبط
       alert('❌ Error: ' + (error.response?.data?.message || error.message || 'Failed to process category'));
     } finally {
       setLoading(false);
@@ -125,7 +121,7 @@ export default function GalleryManager() {
 
   const getImageUrl = (url: string) => {
     if (!url) return '';
-    return url.startsWith('/uploads') ? `http://localhost:5000${url}` : url;
+    return url.startsWith('/uploads') ? `${BACKEND_URL}${url}` : url;
   };
 
   return (

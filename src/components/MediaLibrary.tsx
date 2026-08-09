@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { fetchMedia, deleteMedia, logActivity } from '../api/index'; // 👈 استدعاء اللوج هنا
+import { fetchMedia, deleteMedia, logActivity } from '../api/index';
 import { Trash2, AlertCircle } from 'lucide-react';
+
+const BACKEND_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.nopreahotel.com';
 
 export default function MediaLibrary() {
   const [media, setMedia] = useState<any[]>([]);
@@ -26,14 +30,11 @@ export default function MediaLibrary() {
     setError(null);
     try {
       await deleteMedia(filename);
-      
-      // 🟢 هنا بنسجل الحركة في اللوج في الخلفية
       await logActivity(`Deleted media file: ${filename}`).catch(() => {}); 
       
       alert('✅ Image deleted successfully');
       loadMedia();
     } catch (err: any) {
-      // اصطياد التحذير الذكي من الباك إند لو الصورة مستخدمة
       setError(err.response?.data?.message || 'Failed to delete image');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -57,7 +58,7 @@ export default function MediaLibrary() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {media.map((file, idx) => (
             <div key={idx} className="relative group border border-gray-200 rounded-lg overflow-hidden h-32 bg-gray-50 shadow-sm">
-              <img src={`http://localhost:5000${file.url}`} alt={file.name} className="w-full h-full object-cover" />
+              <img src={file.url.startsWith('/uploads') ? `${BACKEND_URL}${file.url}` : file.url} alt={file.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button 
                   onClick={() => handleDelete(file.name)} 

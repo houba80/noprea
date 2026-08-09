@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { fetchMedia, uploadImage, uploadBulkImages, logActivity } from '../api/index';
 import { X, UploadCloud, CheckCircle, Image as ImageIcon } from 'lucide-react';
 
+const BACKEND_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000' 
+  : 'https://api.nopreahotel.com';
+
 interface MediaSelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -53,7 +57,6 @@ export default function MediaSelectorModal({ isOpen, onClose, onSelect, multiSel
         const newUrls = res.data.imageUrls;
         setSelected(prev => [...prev, ...newUrls]);
         
-        // 🟢 الفتان: تسجيل رفع صور جماعية
         await logActivity(`Uploaded ${files.length} new images to the server`).catch(() => {});
       } else {
         const fd = new FormData();
@@ -61,7 +64,6 @@ export default function MediaSelectorModal({ isOpen, onClose, onSelect, multiSel
         const res = await uploadImage(fd);
         setSelected([res.data.imageUrl]);
         
-        // 🟢 الفتان: تسجيل رفع صورة مفردة باسمها
         await logActivity(`Uploaded new image: ${files[0].name}`).catch(() => {});
       }
       await loadMedia(); 
@@ -119,7 +121,7 @@ export default function MediaSelectorModal({ isOpen, onClose, onSelect, multiSel
                 const isSelected = selected.includes(file.url);
                 return (
                   <div key={idx} onClick={() => toggleSelection(file.url)} className={`relative h-32 rounded-lg overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-blue-600 shadow-md transform scale-105' : 'border-transparent hover:border-gray-300'}`}>
-                    <img src={`http://localhost:5000${file.url}`} className="w-full h-full object-cover" alt="media" />
+                    <img src={file.url.startsWith('/uploads') ? `${BACKEND_URL}${file.url}` : file.url} className="w-full h-full object-cover" alt="media" />
                     {isSelected && (
                       <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1">
                         <CheckCircle className="w-4 h-4" />
