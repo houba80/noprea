@@ -23,18 +23,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🟢 اللوجيك الذكي لتحديد مسار الصور الدائم
+// 🟢 لوجيك قاطع لتحديد مسار الصور الدائم (بيفحص الهارد ديسك بجد)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// لو السيرفر على Hostinger هيرجع خطوتين لورا، لو Localhost هيكريت الفولدر جواه
-const persistentUploadsPath = __dirname.includes('hbuilds') 
-  ? path.join(__dirname, '../../persistent_uploads') 
-  : path.join(__dirname, 'uploads');
+// احتمالات مسار Hostinger (حسب السيرفر قاري الـ Symlink ولا المسار الحقيقي)
+const hostingerPath1 = path.join(__dirname, '../../../persistent_uploads'); 
+const hostingerPath2 = path.join(__dirname, '../../persistent_uploads');
 
-// إنشاء الفولدر أوتوماتيك لو مش موجود
-if (!fs.existsSync(persistentUploadsPath)) {
-  fs.mkdirSync(persistentUploadsPath, { recursive: true });
+let persistentUploadsPath = path.join(__dirname, 'uploads'); // مسار اللوكال الافتراضي
+
+if (fs.existsSync(hostingerPath1)) {
+  persistentUploadsPath = hostingerPath1;
+} else if (fs.existsSync(hostingerPath2)) {
+  persistentUploadsPath = hostingerPath2;
+} else if (!fs.existsSync(persistentUploadsPath)) {
+  fs.mkdirSync(persistentUploadsPath, { recursive: true }); // لو لوكال نكريته
 }
 
 const allowedOrigins = [
@@ -51,7 +55,7 @@ app.use(cors({
 
 app.use(express.json()); 
 
-// 🟢 توجيه أي طلب للصور للفولدر الدائم
+// 🟢 توجيه أي طلب للصور للفولدر الصح اللي السيرفر لقاه
 app.use('/uploads', express.static(persistentUploadsPath)); 
 
 mongoose.connect(process.env.MONGODB_URI)

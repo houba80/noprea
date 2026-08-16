@@ -8,21 +8,27 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// 🟢 نفس اللوجيك بس بنرجع خطوة زيادة عشان إحنا جوه فولدر routes
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const persistentUploadsPath = __dirname.includes('hbuilds') 
-  ? path.join(__dirname, '../../../persistent_uploads') 
-  : path.join(__dirname, '../uploads');
+const hostingerPath1 = path.join(__dirname, '../../../../persistent_uploads'); 
+const hostingerPath2 = path.join(__dirname, '../../../persistent_uploads');
 
-if (!fs.existsSync(persistentUploadsPath)) {
+let persistentUploadsPath = path.join(__dirname, '../uploads');
+
+if (fs.existsSync(hostingerPath1)) {
+  persistentUploadsPath = hostingerPath1;
+} else if (fs.existsSync(hostingerPath2)) {
+  persistentUploadsPath = hostingerPath2;
+} else if (!fs.existsSync(persistentUploadsPath)) {
   fs.mkdirSync(persistentUploadsPath, { recursive: true });
 }
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// 🟢 دالة لتنظيف اسم الصورة للـ SEO (بتشيل المسافات والرموز)
+// 🟢 دالة لتنظيف اسم الصورة للـ SEO
 const generateSEOFileName = (originalname) => {
   const nameWithoutExt = path.parse(originalname).name;
   const safeName = nameWithoutExt.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -34,7 +40,7 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'Please upload an image!' });
     
-    // استخدام الدالة الجديدة للحفاظ على اسم الصورة للـ SEO
+    // استخدام الدالة الجديدة للحفاظ على اسم الصورة
     const filename = generateSEOFileName(req.file.originalname);
     
     await sharp(req.file.buffer)
@@ -56,7 +62,7 @@ router.post('/bulk', protect, upload.array('images', 20), async (req, res) => {
     const uploadedUrls = [];
     
     for (const file of req.files) {
-      // استخدام الدالة الجديدة للحفاظ على اسم الصورة للـ SEO
+      // استخدام الدالة الجديدة للحفاظ على اسم الصورة
       const filename = generateSEOFileName(file.originalname);
       
       await sharp(file.buffer)
