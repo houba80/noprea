@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import compression from 'compression'; // 🟢 استدعاء مكتبة الضغط
 
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/Rooms.js';
@@ -23,10 +24,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// 🟢 تفعيل الضغط لكل الطلبات (بيقلل حجم الداتا لـ 70%)
+app.use(compression()); 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🟢 دالة البحث الأساسية (لازم تفضل عشان توصلنا للفولدر الدائم)
+// دالة البحث عن الفولدر الدائم
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -58,8 +62,6 @@ app.use(cors({
 app.use(express.json()); 
 
 app.use('/uploads', express.static(persistentUploadsPath)); 
-
-// ❌ تم مسح راوت الـ Debugging (اللينك السري) من هنا أماناً للمشروع ❌
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
