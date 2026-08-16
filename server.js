@@ -26,6 +26,7 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 🟢 دالة البحث الأساسية (لازم تفضل عشان توصلنا للفولدر الدائم)
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -58,14 +59,7 @@ app.use(express.json());
 
 app.use('/uploads', express.static(persistentUploadsPath)); 
 
-app.get('/api/check-path', (req, res) => {
-  res.json({
-    currentDir: __dirname,
-    resolvedUploadsPath: persistentUploadsPath,
-    folderExists: fs.existsSync(persistentUploadsPath),
-    filesInside: fs.existsSync(persistentUploadsPath) ? fs.readdirSync(persistentUploadsPath).slice(0, 5) : []
-  });
-});
+// ❌ تم مسح راوت الـ Debugging (اللينك السري) من هنا أماناً للمشروع ❌
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))

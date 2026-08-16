@@ -11,6 +11,7 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 🟢 دالة البحث عن الفولدر الآمن
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -30,6 +31,7 @@ if (!fs.existsSync(persistentUploadsPath)) {
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// 🟢 دالة الـ SEO لتنظيف اسم الصورة
 const generateSEOFileName = (originalname) => {
   const nameWithoutExt = path.parse(originalname).name;
   const safeName = nameWithoutExt.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
