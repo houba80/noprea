@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/Rooms.js';
 import uploadRoutes from './routes/upload.js';
@@ -19,7 +23,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🟢 التعديل هنا: خلينا السيرفر يقبل من اللوكال هوست ومن أي دومين يخص الفندق
+// 🟢 اللوجيك الذكي لتحديد مسار الصور الدائم
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// لو السيرفر على Hostinger هيرجع خطوتين لورا، لو Localhost هيكريت الفولدر جواه
+const persistentUploadsPath = __dirname.includes('hbuilds') 
+  ? path.join(__dirname, '../../persistent_uploads') 
+  : path.join(__dirname, 'uploads');
+
+// إنشاء الفولدر أوتوماتيك لو مش موجود
+if (!fs.existsSync(persistentUploadsPath)) {
+  fs.mkdirSync(persistentUploadsPath, { recursive: true });
+}
+
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://test.nopreahotel.com', 
@@ -33,7 +50,9 @@ app.use(cors({
 })); 
 
 app.use(express.json()); 
-app.use('/uploads', express.static('uploads')); 
+
+// 🟢 توجيه أي طلب للصور للفولدر الدائم
+app.use('/uploads', express.static(persistentUploadsPath)); 
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
@@ -51,6 +70,7 @@ app.use('/api/activity', activityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/media', mediaRoutes);
 app.use('/api/retreats', retreatRoutes);
+
 app.get('/api/status', (req, res) => {
   res.json({ message: 'NOPREA Backend is 100% Complete! 🚀' });
 });
