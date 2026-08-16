@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Layers, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { fetchGallery } from '../api/index';
 
-import axios from 'axios';
-
-// 🟢 التعديل الجديد: لو على جهازك هيكلم 5000، لو على السيرفر هيكلم الدومين الجديد بتاع الباك إند
 const BACKEND_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000' 
-  : 'https://api.nopreahotel.com'; // 👈 حطينا رابط الـ API المخصوص
+  : 'https://api.nopreahotel.com'; 
 
-const API = axios.create({
-  baseURL: `${BACKEND_URL}/api`, 
-});
+// 🟢 دالة ذكية لمعالجة وتصليح مسارات الصور في الجاليري
+const getValidImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.includes('localhost:5000')) return url.replace('http://localhost:5000', BACKEND_URL);
+  if (url.startsWith('/uploads')) return `${BACKEND_URL}${url}`;
+  return url;
+};
 
 export default function Gallery() {
   const [albums, setAlbums] = useState<any[]>([]);
@@ -85,7 +86,7 @@ export default function Gallery() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {albums.map((album) => {
-              const cover = album.coverImage?.startsWith('/uploads') ? `${BACKEND_URL}${album.coverImage}` : album.coverImage;
+              const cover = getValidImageUrl(album.coverImage);
               const photoCount = album.images?.length || 0;
 
               return (
@@ -148,7 +149,7 @@ export default function Gallery() {
             </button>
 
             <img 
-              src={selectedAlbum.images[lightboxIndex].src.startsWith('/uploads') ? `${BACKEND_URL}${selectedAlbum.images[lightboxIndex].src}` : selectedAlbum.images[lightboxIndex].src} 
+              src={getValidImageUrl(selectedAlbum.images[lightboxIndex].src)} 
               alt={selectedAlbum.images[lightboxIndex].title} 
               referrerPolicy="no-referrer" 
               className="max-h-screen max-w-full object-contain mx-auto w-full h-full p-0 md:p-12 transition-transform duration-300" 

@@ -6,11 +6,26 @@ const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : 'https://api.nopreahotel.com';
 
+// 🟢 دالة ذكية بتعالج أي مسار للصورة وتصلحه أوتوماتيك
+const getValidImageUrl = (url: string) => {
+  if (!url) return '/placeholder-room.jpg';
+  // 1. لو اللينك متسجل بالغلط من أيام اللوكال هوست
+  if (url.includes('localhost:5000')) {
+    return url.replace('http://localhost:5000', BACKEND_URL);
+  }
+  // 2. لو صورة مرفوعة من الميديا لايبراري
+  if (url.startsWith('/uploads')) {
+    return `${BACKEND_URL}${url}`;
+  }
+  // 3. لو صورة من الداتا الافتراضية
+  return url; 
+};
+
 export default function RoomCard({ room }: { room: any }) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const rawImage = room.coverImage || room.image || '/placeholder-room.jpg';
-  const coverImage = rawImage.startsWith('/uploads') ? `${BACKEND_URL}${rawImage}` : rawImage;
+  const coverImage = getValidImageUrl(rawImage);
 
   const view = room.view || (room.title?.toLowerCase().includes('nile') ? 'Nile View' : 'Garden Courtyard');
   const type = room.type || 'Room';
@@ -21,17 +36,14 @@ export default function RoomCard({ room }: { room: any }) {
   const description = room.description || "Combining authentic Nubian architecture with modern comfort, offering a perfect setting for a relaxing stay.";
   const priceInfo = room.priceInfo || (room.price ? `From $${room.price}/night` : 'Price on request'); 
 
-  // 🟢 اللوجيك الذكي لمعالجة لينك الحجز اللي العميل بيدخله
   let bookingLink = "/book";
   if (room.embedLink) {
     try {
-      // لو العميل نسخ اللينك كامل من الموقع
       const parsedUrl = new URL(room.embedLink);
       if (parsedUrl.search) {
-        bookingLink = `/book${parsedUrl.search}`; // هياخد الجزء بتاع rateId بس
+        bookingLink = `/book${parsedUrl.search}`;
       }
     } catch (error) {
-      // احتياطي: لو العميل حط الجزء الأخير بس
       if (room.embedLink.includes('?')) {
         bookingLink = `/book${room.embedLink.substring(room.embedLink.indexOf('?'))}`;
       }
@@ -83,7 +95,6 @@ export default function RoomCard({ room }: { room: any }) {
 
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
             <span className="text-lg font-serif text-charcoal">{priceInfo}</span>
-            {/* 🟢 استخدام اللينك الديناميكي اللي جهزناه فوق */}
             <Link to={bookingLink} className="bg-charcoal text-white text-sm font-bold px-6 py-2 rounded hover:bg-black transition-colors">
               Discover
             </Link>
