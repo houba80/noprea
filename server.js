@@ -23,22 +23,23 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🟢 لوجيك قاطع لتحديد مسار الصور الدائم (بيفحص الهارد ديسك بجد)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// احتمالات مسار Hostinger (حسب السيرفر قاري الـ Symlink ولا المسار الحقيقي)
-const hostingerPath1 = path.join(__dirname, '../../../persistent_uploads'); 
-const hostingerPath2 = path.join(__dirname, '../../persistent_uploads');
+const findFolderUpwards = (startDir, folderName) => {
+  let currentDir = startDir;
+  while (currentDir !== path.parse(currentDir).root) {
+    const targetPath = path.join(currentDir, folderName);
+    if (fs.existsSync(targetPath)) return targetPath;
+    currentDir = path.dirname(currentDir); 
+  }
+  return null;
+};
 
-let persistentUploadsPath = path.join(__dirname, 'uploads'); // مسار اللوكال الافتراضي
+const persistentUploadsPath = findFolderUpwards(__dirname, 'persistent_uploads') || path.join(__dirname, 'uploads');
 
-if (fs.existsSync(hostingerPath1)) {
-  persistentUploadsPath = hostingerPath1;
-} else if (fs.existsSync(hostingerPath2)) {
-  persistentUploadsPath = hostingerPath2;
-} else if (!fs.existsSync(persistentUploadsPath)) {
-  fs.mkdirSync(persistentUploadsPath, { recursive: true }); // لو لوكال نكريته
+if (!fs.existsSync(persistentUploadsPath)) {
+  fs.mkdirSync(persistentUploadsPath, { recursive: true });
 }
 
 const allowedOrigins = [
@@ -55,14 +56,21 @@ app.use(cors({
 
 app.use(express.json()); 
 
-// 🟢 توجيه أي طلب للصور للفولدر الصح اللي السيرفر لقاه
 app.use('/uploads', express.static(persistentUploadsPath)); 
+
+app.get('/api/check-path', (req, res) => {
+  res.json({
+    currentDir: __dirname,
+    resolvedUploadsPath: persistentUploadsPath,
+    folderExists: fs.existsSync(persistentUploadsPath),
+    filesInside: fs.existsSync(persistentUploadsPath) ? fs.readdirSync(persistentUploadsPath).slice(0, 5) : []
+  });
+});
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
-// ربط كل مسارات المشروع
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/upload', uploadRoutes);
