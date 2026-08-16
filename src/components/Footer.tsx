@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, Instagram, Facebook, Phone, Heart, Send, MapPin, Linkedin } from 'lucide-react';
+import TripAdvisorWidget from './TripAdvisorWidget';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -92,23 +93,32 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10 items-start">
           
           <div className="lg:col-span-4 space-y-6">
-            <Link to="/" onClick={scrollToTop} aria-label="Go to homepage" className="inline-block cursor-pointer mb-2">
-              {!logoError ? (
-                <img 
-                  src="logo/logo.png" 
-                  alt="NOPREA Boutique Hotel" 
-                  width="180"
-                  height="128"
-                  className="h-24 md:h-28 lg:h-32 w-auto object-contain"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <span className="font-serif text-3xl tracking-[0.25em] font-medium text-white">NOPREA</span>
-                  <span className="text-[10px] tracking-[0.4em] uppercase font-light text-[#B78C74] mt-1">Boutique Hotel</span>
-                </div>
-              )}
-            </Link>
+            
+            {/* 🟢 هنا السحر: حطينا اللوجو والويدجت جنب بعض (يمين اللوجو) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-2">
+              <Link to="/" onClick={scrollToTop} aria-label="Go to homepage" className="inline-block cursor-pointer shrink-0">
+                {!logoError ? (
+                  <img 
+                    src="logo/logo.png" 
+                    alt="NOPREA Boutique Hotel" 
+                    width="180"
+                    height="128"
+                    className="h-24 md:h-28 lg:h-32 w-auto object-contain"
+                    onError={() => setLogoError(true)}
+                  />
+                ) : (
+                  <div className="flex flex-col">
+                    <span className="font-serif text-3xl tracking-[0.25em] font-medium text-white">NOPREA</span>
+                    <span className="text-[10px] tracking-[0.4em] uppercase font-light text-[#B78C74] mt-1">Boutique Hotel</span>
+                  </div>
+                )}
+              </Link>
+
+              {/* 🟢 ويدجت تريب أدفايزر */}
+              <div className="shrink-0 mt-2 sm:mt-0">
+                <TripAdvisorWidget />
+              </div>
+            </div>
             
             <p className="text-xs text-white/70 leading-relaxed font-light max-w-sm">
               Celebrating genuine hospitality, Nubian craftsmanship, and comfortable island living along the quiet shores of the timeless Nile River in Aswan, Egypt.
@@ -188,7 +198,6 @@ export default function Footer() {
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-[11px] text-white/55 space-y-4 md:space-y-0">
           <div>&copy; {new Date().getFullYear()} NOPREA Boutique Hotel. All Rights Reserved.</div>
           <div className="flex items-center gap-1"><Heart className="w-3 h-3 text-[#C28C7E] fill-current" /> Celebrating Nubian Heritage</div>
-          {/* 🟢 تم تغيير الاسم هنا لـ NOPREA's Overview */}
           <div className="flex space-x-6">
             <Link to="/terms-conditions" className="hover:text-white text-[#E5D3B3]">Terms &amp; Conditions</Link>
             <Link to="/overview" onClick={scrollToTop} className="hover:text-white text-[#E5D3B3]">NOPREA's Overview</Link>
