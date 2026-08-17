@@ -9,9 +9,10 @@ router.post('/', async (req, res) => {
   if (!email) return res.status(400).json({ message: 'Email is required' });
 
   try {
-    const transporter = nodemailer.createTransport({
+    // 1. سيرفر إرسال الترحيب للعميل (visitaswan@)
+    const newsletterTransporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      port: Number(process.env.SMTP_PORT),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.NEWSLETTER_EMAIL,
@@ -19,10 +20,21 @@ router.post('/', async (req, res) => {
       },
     });
 
-    // 1. رسالة الترحيب للعميل
-    const welcomeMail = transporter.sendMail({
+    // 2. سيرفر إشعار الأدمن المجرب والشغال (support@)
+    const supportTransporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SUPPORT_EMAIL,
+        pass: process.env.SUPPORT_PASS,
+      },
+    });
+
+    // أ. إيميل الترحيب للعميل
+    const welcomeMailOptions = {
       from: `"NOPREA Hotel" <${process.env.NEWSLETTER_EMAIL}>`,
-      to: email, 
+      to: email,
       subject: 'Welcome to NOPREA Hotel Newsletter! 🌅',
       html: `
         <div style="font-family: serif; text-align: center; padding: 40px 20px; background-color: #faf9f6; color: #333;">
@@ -36,28 +48,29 @@ router.post('/', async (req, res) => {
           </p>
         </div>
       `,
-    });
+    };
 
-    // 2. إشعار للفندق على support@nopreahotel.com لمنع الـ Self-Sending Block
-    const adminNotification = transporter.sendMail({
-      from: `"NOPREA Newsletter" <${process.env.NEWSLETTER_EMAIL}>`,
-      to: process.env.SUPPORT_EMAIL || process.env.NEWSLETTER_EMAIL,
+    // ب. إشعار الأدمن بنفس طريقة Contact الناجحة
+    const adminMailOptions = {
+      from: `"NOPREA System" <${process.env.SUPPORT_EMAIL}>`,
+      to: process.env.SUPPORT_EMAIL,
       replyTo: email,
-      subject: `📬 New Subscriber: ${email}`,
+      subject: `📬 New Newsletter Subscriber: ${email}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; background-color: #f9f9f9;">
-          <h2 style="color: #333;">New Newsletter Subscription 🎉</h2>
-          <p style="font-size: 14px; color: #555;">A new user subscribed with:</p>
+          <h2 style="color: #333;">New Subscriber Alert 🎉</h2>
+          <p style="font-size: 14px; color: #555;">A new guest subscribed to the newsletter:</p>
           <p style="font-size: 16px; font-weight: bold; color: #1a1a1a; background: #fff; padding: 12px; border-radius: 6px; border: 1px solid #ddd; display: inline-block;">
             ${email}
           </p>
         </div>
       `,
-    });
+    };
 
-    // إرسال الإيميلين في نفس الوقت
-    await Promise.all([welcomeMail, adminNotification]);
-    
+    // تنفيذ الإرسال فوراً
+    await newsletterTransporter.sendMail(welcomeMailOptions);
+    await supportTransporter.sendMail(adminMailOptions);
+
     res.status(200).json({ message: 'Successfully subscribed to the newsletter!' });
   } catch (error) {
     console.error("❌ Newsletter Email Error:", error);
