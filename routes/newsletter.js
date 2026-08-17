@@ -19,8 +19,8 @@ router.post('/', async (req, res) => {
       },
     });
 
-    // 1. رسالة الترحيب اللي هتروح للعميل المُشترك
-    const welcomeMailOptions = {
+    // 1. رسالة الترحيب للعميل
+    const welcomeMail = transporter.sendMail({
       from: `"NOPREA Hotel" <${process.env.NEWSLETTER_EMAIL}>`,
       to: email, 
       subject: 'Welcome to NOPREA Hotel Newsletter! 🌅',
@@ -36,29 +36,27 @@ router.post('/', async (req, res) => {
           </p>
         </div>
       `,
-    };
+    });
 
-    // 2. إشعار الفندق بالمُشترك الجديد على visitaswan@nopreahotel.com
-    const adminNotificationOptions = {
-      from: `"NOPREA System" <${process.env.NEWSLETTER_EMAIL}>`,
-      to: process.env.NEWSLETTER_EMAIL, 
-      subject: '📬 New Newsletter Subscriber!',
+    // 2. إشعار للفندق على support@nopreahotel.com لمنع الـ Self-Sending Block
+    const adminNotification = transporter.sendMail({
+      from: `"NOPREA Newsletter" <${process.env.NEWSLETTER_EMAIL}>`,
+      to: process.env.SUPPORT_EMAIL || process.env.NEWSLETTER_EMAIL,
+      replyTo: email,
+      subject: `📬 New Subscriber: ${email}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; background-color: #f9f9f9;">
-          <h2 style="color: #333;">New Subscriber Alert 🎉</h2>
-          <p style="font-size: 14px; color: #555;">
-            A new user has just subscribed to the newsletter:
-          </p>
-          <p style="font-size: 18px; font-weight: bold; color: #1a1a1a; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #ddd; display: inline-block;">
+          <h2 style="color: #333;">New Newsletter Subscription 🎉</h2>
+          <p style="font-size: 14px; color: #555;">A new user subscribed with:</p>
+          <p style="font-size: 16px; font-weight: bold; color: #1a1a1a; background: #fff; padding: 12px; border-radius: 6px; border: 1px solid #ddd; display: inline-block;">
             ${email}
           </p>
         </div>
       `,
-    };
+    });
 
-    // إرسال الإيميلين بالتوازي
-    await transporter.sendMail(welcomeMailOptions);
-    await transporter.sendMail(adminNotificationOptions);
+    // إرسال الإيميلين في نفس الوقت
+    await Promise.all([welcomeMail, adminNotification]);
     
     res.status(200).json({ message: 'Successfully subscribed to the newsletter!' });
   } catch (error) {
