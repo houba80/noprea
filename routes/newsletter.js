@@ -9,7 +9,6 @@ router.post('/', async (req, res) => {
   if (!email) return res.status(400).json({ message: 'Email is required' });
 
   try {
-    // إعداد سيرفر الإيميل الخاص بالنشرة البريدية
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -20,10 +19,10 @@ router.post('/', async (req, res) => {
       },
     });
 
-    // رسالة الترحيب اللي هتروح للعميل
-    const mailOptions = {
+    // 1. رسالة الترحيب اللي هتروح للعميل المُشترك
+    const welcomeMailOptions = {
       from: `"NOPREA Hotel" <${process.env.NEWSLETTER_EMAIL}>`,
-      to: email,
+      to: email, 
       subject: 'Welcome to NOPREA Hotel Newsletter! 🌅',
       html: `
         <div style="font-family: serif; text-align: center; padding: 40px 20px; background-color: #faf9f6; color: #333;">
@@ -39,9 +38,27 @@ router.post('/', async (req, res) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    
-    // (اختياري) ممكن هنا تسجل الإيميل في الداتا بيس عشان تبعتلهم بعدين
+    // 2. إشعار الفندق بالمُشترك الجديد على visitaswan@nopreahotel.com
+    const adminNotificationOptions = {
+      from: `"NOPREA System" <${process.env.NEWSLETTER_EMAIL}>`,
+      to: process.env.NEWSLETTER_EMAIL, 
+      subject: '📬 New Newsletter Subscriber!',
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; background-color: #f9f9f9;">
+          <h2 style="color: #333;">New Subscriber Alert 🎉</h2>
+          <p style="font-size: 14px; color: #555;">
+            A new user has just subscribed to the newsletter:
+          </p>
+          <p style="font-size: 18px; font-weight: bold; color: #1a1a1a; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #ddd; display: inline-block;">
+            ${email}
+          </p>
+        </div>
+      `,
+    };
+
+    // إرسال الإيميلين بالتوازي
+    await transporter.sendMail(welcomeMailOptions);
+    await transporter.sendMail(adminNotificationOptions);
     
     res.status(200).json({ message: 'Successfully subscribed to the newsletter!' });
   } catch (error) {
