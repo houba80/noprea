@@ -5,7 +5,8 @@ import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import compression from 'compression'; // 🟢 استدعاء مكتبة الضغط
+import compression from 'compression';
+import apicache from 'apicache';
 
 import authRoutes from './routes/auth.js';
 import roomRoutes from './routes/Rooms.js';
@@ -24,13 +25,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🟢 تفعيل الضغط لكل الطلبات (بيقلل حجم الداتا لـ 70%)
+// تفعيل ضغط الداتا (التيربو)
 app.use(compression()); 
 
+// 🟢 الرادار الذكي لمسار الصور
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// دالة البحث عن الفولدر الدائم
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -67,20 +68,27 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
+// 🟢 إعداد الكاش لمدة 5 دقايق
+const cache = apicache.middleware('5 minutes');
+
+// 🟢 الراوتس اللي عليها الكاش (لأنها مش بتتغير كل ثانية)
+app.use('/api/rooms', cache, roomRoutes);
+app.use('/api/gallery', cache, galleryRoutes);
+app.use('/api/reviews', cache, reviewRoutes);
+app.use('/api/retreats', cache, retreatRoutes);
+// شلنا الـ cache من الـ media عشان لو رفعت صورة ومسحتها تسمع معاك في اللوحة فوراً
+app.use('/api/media', mediaRoutes); 
+
+// 🔴 الراوتس اللي من غير كاش (لازم تكون Real-time)
 app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
-app.use('/api/upload', uploadRoutes);
-app.use('/api/gallery', galleryRoutes);
-app.use('/api/reviews', reviewRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/media', mediaRoutes);
-app.use('/api/retreats', retreatRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/api/status', (req, res) => {
-  res.json({ message: 'NOPREA Backend is 100% Complete! 🚀' });
+  res.json({ message: 'NOPREA Backend is 100% Complete with Turbo Cache! 🚀' });
 });
 
 app.listen(PORT, () => {

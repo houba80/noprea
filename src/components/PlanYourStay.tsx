@@ -1,23 +1,36 @@
 import React, { useState } from 'react';
 import { Compass, Check, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { sendEnquiry } from '../api'; // 🟢 استدعاء الـ API
 
 export default function PlanYourStay() {
   const [enquirySuccess, setEnquirySuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
+  // 🟢 ربط الفرمة بالباك إند الحقيقي
   const handleEnquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !email) return;
-    
-    // TODO: Connect this to backend API to send enquiry to support@nopreahotel.com
-    console.log(`Sending enquiry to support@nopreahotel.com from ${fullName} (${email})`);
 
-    setEnquirySuccess(true);
-    setFullName(''); setEmail(''); setMessage('');
-    setTimeout(() => setEnquirySuccess(false), 5000);
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      await sendEnquiry({ name: fullName, email, message });
+      setEnquirySuccess(true);
+      setFullName('');
+      setEmail('');
+      setMessage('');
+      setTimeout(() => setEnquirySuccess(false), 5000);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || 'Failed to send enquiry. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -83,8 +96,9 @@ export default function PlanYourStay() {
                   <input type="text" placeholder="Your Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-clay/15 text-xs focus:ring-1 focus:ring-clay outline-none" required />
                   <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-clay/15 text-xs focus:ring-1 focus:ring-clay outline-none" required />
                   <textarea placeholder="Tell us about your trip..." value={message} onChange={(e) => setMessage(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-clay/15 text-xs h-32 focus:ring-1 focus:ring-clay outline-none resize-none" />
-                  <button type="submit" className="w-full py-4 rounded-xl bg-nile-blue text-white text-xs uppercase tracking-widest hover:bg-terracotta transition-all cursor-pointer mt-2">
-                    Send Message
+                  {errorMsg && <p className="text-red-500 text-xs text-center">{errorMsg}</p>}
+                  <button type="submit" disabled={loading} className="w-full py-4 rounded-xl bg-nile-blue text-white text-xs uppercase tracking-widest hover:bg-terracotta transition-all cursor-pointer mt-2 disabled:opacity-50">
+                    {loading ? 'Sending...' : 'Send Message'}
                   </button>
                 </form>
               )}

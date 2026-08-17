@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, Instagram, Facebook, Phone, Heart, Send, MapPin, Linkedin } from 'lucide-react';
 import TripAdvisorWidget from './TripAdvisorWidget';
+import { subscribeNewsletter } from '../api'; // 🟢 استدعاء الـ API
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [logoError, setLogoError] = useState(false);
 
   const partners = [
@@ -18,12 +21,24 @@ export default function Footer() {
     { name: 'Little Hotelier', src: '/Partners/little-hotelier-logo.png' },
   ];
 
+  // 🟢 ربط الـ Submit بالباك إند الحقيقي
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setSuccess(true);
-    setEmail('');
-    setTimeout(() => setSuccess(false), 5000);
+
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      await subscribeNewsletter({ email });
+      setSuccess(true);
+      setEmail('');
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || 'Failed to subscribe');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const footerLinks = [
@@ -93,8 +108,6 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10 items-start">
           
           <div className="lg:col-span-4 space-y-6">
-            
-            {/* 🟢 هنا السحر: حطينا اللوجو والويدجت جنب بعض (يمين اللوجو) */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-2">
               <Link to="/" onClick={scrollToTop} aria-label="Go to homepage" className="inline-block cursor-pointer shrink-0">
                 {!logoError ? (
@@ -114,7 +127,6 @@ export default function Footer() {
                 )}
               </Link>
 
-              {/* 🟢 ويدجت تريب أدفايزر */}
               <div className="shrink-0 mt-2 sm:mt-0">
                 <TripAdvisorWidget />
               </div>
@@ -176,19 +188,22 @@ export default function Footer() {
             {success ? (
               <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E5D3B3]">Subscribed successfully!</div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2 w-full">
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  aria-label="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-xs flex-1 text-white placeholder-white/30 focus:outline-none"
-                  required
-                />
-                <button type="submit" aria-label="Subscribe to newsletter" className="cursor-pointer shrink-0 p-3 bg-[#C28C7E] hover:bg-[#B78C74] text-white rounded-xl transition-all">
-                  <Send className="w-4 h-4" />
-                </button>
+              <form onSubmit={handleSubscribe} className="flex flex-col gap-2 w-full">
+                <div className="flex gap-2 w-full">
+                  <input
+                    type="email"
+                    placeholder="Your Email"
+                    aria-label="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-white/5 border border-white/10 px-4 py-3 rounded-xl text-xs flex-1 text-white placeholder-white/30 focus:outline-none"
+                    required
+                  />
+                  <button type="submit" disabled={loading} aria-label="Subscribe to newsletter" className="cursor-pointer shrink-0 p-3 bg-[#C28C7E] hover:bg-[#B78C74] text-white rounded-xl transition-all disabled:opacity-50">
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+                {errorMsg && <p className="text-red-400 text-[10px] mt-1">{errorMsg}</p>}
               </form>
             )}
           </div>
