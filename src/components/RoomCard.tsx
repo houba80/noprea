@@ -34,8 +34,8 @@ export default function RoomCard({ room }: { room: any }) {
   const amenities = room.features || room.amenities || defaultAmenities;
   
   const description = room.description || "Combining authentic Nubian architecture with modern comfort, offering a perfect setting for a relaxing stay.";
-  const priceInfo = room.priceInfo || (room.price ? `From $${room.price}/night` : 'Price on request'); 
-
+  
+  // 🟢 الكود الخاص بمسار الحجز (Booking Link) بياخد הـ Query من Little Hotelier
   let bookingLink = "/book";
   if (room.embedLink) {
     try {
@@ -94,9 +94,12 @@ export default function RoomCard({ room }: { room: any }) {
           </div>
 
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-            <span className="text-lg font-serif text-charcoal">{priceInfo}</span>
-            <Link to={bookingLink} className="bg-charcoal text-white text-sm font-bold px-6 py-2 rounded hover:bg-black transition-colors">
-              Discover
+            {/* 🟢 تم استبدال السعر بالنص الاحترافي */}
+            <span className="text-[11px] uppercase tracking-widest font-bold text-clay/80">
+              Rates vary by season
+            </span>
+            <Link to={bookingLink} className="bg-charcoal text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-black transition-colors whitespace-nowrap">
+              Check Availability
             </Link>
           </div>
         </div>
