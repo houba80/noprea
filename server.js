@@ -69,6 +69,10 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
 // 🟢 إعداد الكاش لمدة 5 دقايق
+// 🟢 إعداد الكاش بذكاء عشان يفصل بين www واللي من غير www
+apicache.options({
+  appendKey: (req, res) => req.headers.origin || 'unknown'
+});
 const cache = apicache.middleware('5 minutes');
 
 // 🟢 الراوتس اللي عليها الكاش (لأنها مش بتتغير كل ثانية)
