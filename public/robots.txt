@@ -1,2 +1,11 @@
 User-agent: *
+Allow: /
+
+# منع بوتات الذكاء الاصطناعي من استهلاك موارد السيرفر (اختياري بس مفيد)
+User-agent: GPTBot
 Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+Sitemap: https://www.nopreahotel.com/sitemap.xml
