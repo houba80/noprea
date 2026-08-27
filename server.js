@@ -52,7 +52,7 @@ if (!fs.existsSync(persistentUploadsPath)) {
 // 🟢 تنظيف الدومينات المسموحة للنسخة الموحدة فقط
 const allowedOrigins = [
   'http://localhost:3000', 
-  'https://test.nopreahotel.com', 
+  'https://nopreahotel.com', 
   'https://www.nopreahotel.com'
 ];
 
