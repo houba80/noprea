@@ -49,10 +49,10 @@ if (!fs.existsSync(persistentUploadsPath)) {
   fs.mkdirSync(persistentUploadsPath, { recursive: true });
 }
 
+// 🟢 تنظيف الدومينات المسموحة للنسخة الموحدة فقط
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://test.nopreahotel.com', 
-  'https://nopreahotel.com', 
   'https://www.nopreahotel.com'
 ];
 
@@ -69,11 +69,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
-// 🟢 إعداد الكاش لمدة 5 دقايق
-// 🟢 إعداد الكاش بذكاء عشان يفصل بين www واللي من غير www
-apicache.options({
-  appendKey: (req, res) => req.headers.origin || 'unknown'
-});
+// 🟢 إعداد الكاش البسيط والمستقر لمدة 5 دقايق
 const cache = apicache.middleware('5 minutes');
 
 // 🟢 الراوتس اللي عليها الكاش (لأنها مش بتتغير كل ثانية)
