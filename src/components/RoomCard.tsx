@@ -6,18 +6,14 @@ const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : 'https://api.nopreahotel.com';
 
-// 🟢 دالة ذكية بتعالج أي مسار للصورة وتصلحه أوتوماتيك
 const getValidImageUrl = (url: string) => {
   if (!url) return '/placeholder-room.jpg';
-  // 1. لو اللينك متسجل بالغلط من أيام اللوكال هوست
   if (url.includes('localhost:5000')) {
     return url.replace('http://localhost:5000', BACKEND_URL);
   }
-  // 2. لو صورة مرفوعة من الميديا لايبراري
   if (url.startsWith('/uploads')) {
     return `${BACKEND_URL}${url}`;
   }
-  // 3. لو صورة من الداتا الافتراضية
   return url; 
 };
 
@@ -35,7 +31,6 @@ export default function RoomCard({ room }: { room: any }) {
   
   const description = room.description || "Combining authentic Nubian architecture with modern comfort, offering a perfect setting for a relaxing stay.";
   
-  // 🟢 الكود الخاص بمسار الحجز (Booking Link) بياخد הـ Query من Little Hotelier
   let bookingLink = "/book";
   if (room.embedLink) {
     try {
@@ -53,17 +48,15 @@ export default function RoomCard({ room }: { room: any }) {
   return (
     <>
       <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 flex flex-col group cursor-pointer h-full">
-        
-        <div 
-          className="relative h-64 overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer"
-          onClick={() => setIsLightboxOpen(true)}
-        >
+        <div className="relative h-64 overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer" onClick={() => setIsLightboxOpen(true)}>
           <img 
             src={coverImage} 
             alt={room.title || room.name} 
+            width={800}
+            height={600}
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
           />
-          
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <div className="bg-white/20 backdrop-blur-md p-4 rounded-full text-white transform scale-90 group-hover:scale-100 transition-transform duration-300 shadow-lg border border-white/30">
               <Maximize2 className="w-6 h-6" />
@@ -79,9 +72,7 @@ export default function RoomCard({ room }: { room: any }) {
             </div>
           </div>
           
-          <p className="text-sm text-gray-500 mb-4 leading-relaxed">
-            {description}
-          </p>
+          <p className="text-sm text-gray-500 mb-4 leading-relaxed">{description}</p>
 
           <div className="flex flex-wrap gap-2 mb-6">
             {amenities.map((feature: string, idx: number) => (
@@ -94,10 +85,7 @@ export default function RoomCard({ room }: { room: any }) {
           </div>
 
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-            {/* 🟢 تم استبدال السعر بالنص الاحترافي */}
-            <span className="text-[11px] uppercase tracking-widest font-bold text-clay/80">
-              Rates vary by season
-            </span>
+            <span className="text-[11px] uppercase tracking-widest font-bold text-clay/80">Rates vary by season</span>
             <Link to={bookingLink} className="bg-charcoal text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-black transition-colors whitespace-nowrap">
               Check Availability
             </Link>
@@ -106,23 +94,11 @@ export default function RoomCard({ room }: { room: any }) {
       </div>
 
       {isLightboxOpen && (
-        <div 
-          className="fixed inset-0 z-[99999] bg-[#0a0a0a]/95 backdrop-blur-sm flex items-center justify-center animate-fade-in p-4 md:p-12"
-          onClick={() => setIsLightboxOpen(false)}
-        >
-          <button 
-            onClick={() => setIsLightboxOpen(false)} 
-            className="absolute top-6 right-6 md:top-8 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer backdrop-blur-md z-50"
-          >
+        <div className="fixed inset-0 z-[99999] bg-[#0a0a0a]/95 backdrop-blur-sm flex items-center justify-center animate-fade-in p-4 md:p-12" onClick={() => setIsLightboxOpen(false)}>
+          <button onClick={() => setIsLightboxOpen(false)} className="absolute top-6 right-6 md:top-8 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer backdrop-blur-md z-50">
             <X className="w-5 h-5" />
           </button>
-          
-          <img 
-            src={coverImage} 
-            alt={room.title || room.name} 
-            className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-            onClick={(e) => e.stopPropagation()} 
-          />
+          <img src={coverImage} alt={room.title || room.name} className="max-h-full max-w-full object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
     </>

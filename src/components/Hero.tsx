@@ -9,22 +9,17 @@ interface HeroProps {
 
 export default function Hero({ onBookClick, onRetreatsClick }: HeroProps) {
   return (
-    // 🟢 التعديل هنا: استخدام min-h-screen وإضافة pb-24 عشان السكشن يمتد ويحتوي الزراير براحتها
     <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden bg-charcoal text-white pt-[160px] md:pt-[192px] pb-24">
-      <video
+     <video
         autoPlay
         loop
         muted
         playsInline
-        preload="none"
+        preload="auto"
         poster="/Sunrise-and-Sunset/golden-hour-nile-reflection-aswan.avif"
         className="absolute inset-0 w-full h-full object-cover opacity-60 scale-105 select-none pointer-events-none"
       >
-        <source 
-          src="/Video/Noprea-Boutique-Hotel-Video.mp4" 
-          type="video/mp4" 
-        />
-        Your browser does not support the video tag.
+        <source src="/Video/Noprea-Boutique-Hotel-Video.mp4" type="video/mp4" />
       </video>
 
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-black/50 pointer-events-none" />

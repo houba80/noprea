@@ -6,7 +6,6 @@ const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : 'https://api.nopreahotel.com'; 
 
-// 🟢 دالة ذكية لمعالجة وتصليح مسارات الصور في الجاليري
 const getValidImageUrl = (url: string) => {
   if (!url) return '';
   if (url.includes('localhost:5000')) return url.replace('http://localhost:5000', BACKEND_URL);
@@ -97,7 +96,11 @@ export default function Gallery() {
                 >
                   <img 
                     src={cover} 
-                    alt={album.title} 
+                    alt={album.title}
+                    width={800}
+                    height={600}
+                    loading="eager"
+                    decoding="async"
                     referrerPolicy="no-referrer" 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                   />
@@ -125,51 +128,24 @@ export default function Gallery() {
 
       {selectedAlbum && selectedAlbum.images && selectedAlbum.images.length > 0 && (
         <div className="fixed inset-0 z-[99999] bg-[#0a0a0a] flex flex-col justify-between items-center animate-fade-in select-none">
-          
           <div className="absolute top-0 inset-x-0 w-full p-6 flex justify-between items-center text-white z-50 bg-gradient-to-b from-black/80 to-transparent">
             <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-warm-sand font-semibold">
               <ImageIcon className="w-4 h-4" />
               <span>{lightboxIndex + 1} / {selectedAlbum.images.length}</span>
             </div>
-            <button 
-              onClick={closeLightbox} 
-              className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer backdrop-blur-md"
-            >
+            <button onClick={closeLightbox} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer backdrop-blur-md">
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="relative w-full h-full flex items-center justify-center">
-            
-            <button 
-              onClick={(e) => { e.stopPropagation(); handlePrev(); }} 
-              className="absolute left-4 md:left-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md"
-            >
+            <button onClick={(e) => { e.stopPropagation(); handlePrev(); }} className="absolute left-4 md:left-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md">
               <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
-
-            <img 
-              src={getValidImageUrl(selectedAlbum.images[lightboxIndex].src)} 
-              alt={selectedAlbum.images[lightboxIndex].title} 
-              referrerPolicy="no-referrer" 
-              className="max-h-screen max-w-full object-contain mx-auto w-full h-full p-0 md:p-12 transition-transform duration-300" 
-            />
-
-            <button 
-              onClick={(e) => { e.stopPropagation(); handleNext(); }} 
-              className="absolute right-4 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md"
-            >
+            <img src={getValidImageUrl(selectedAlbum.images[lightboxIndex].src)} alt={selectedAlbum.images[lightboxIndex].title} referrerPolicy="no-referrer" className="max-h-screen max-w-full object-contain mx-auto w-full h-full p-0 md:p-12 transition-transform duration-300" />
+            <button onClick={(e) => { e.stopPropagation(); handleNext(); }} className="absolute right-4 md:right-8 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50 backdrop-blur-md">
               <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>
-          </div>
-
-          <div className="absolute bottom-0 inset-x-0 w-full p-8 text-center text-white z-50 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
-            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-sand font-bold block mb-2">
-              {selectedAlbum.title}
-            </span>
-            <p className="font-serif text-xl md:text-2xl font-light tracking-wide text-white/90">
-              {selectedAlbum.images[lightboxIndex].title || selectedAlbum.title}
-            </p>
           </div>
         </div>
       )}
