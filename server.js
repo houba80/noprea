@@ -26,10 +26,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.set('trust proxy', 1);
 
-// تفعيل ضغط الداتا (التيربو)
 app.use(compression()); 
 
-// 🟢 الرادار الذكي لمسار الصور
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -49,7 +47,6 @@ if (!fs.existsSync(persistentUploadsPath)) {
   fs.mkdirSync(persistentUploadsPath, { recursive: true });
 }
 
-// 🟢 تنظيف الدومينات المسموحة للنسخة الموحدة فقط
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://nopreahotel.com', 
@@ -63,24 +60,22 @@ app.use(cors({
 
 app.use(express.json()); 
 
+// 🟢 فتحنا البابين عشان يشتغل مع أي مسار جاي من الفرونت إند
+app.use('/uploads', express.static(persistentUploadsPath)); 
 app.use('/persistent_uploads', express.static(persistentUploadsPath)); 
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
+  .then(() => console.log('✅ Connected to MongoDB successfully!'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
-// 🟢 إعداد الكاش البسيط والمستقر لمدة 5 دقايق
 const cache = apicache.middleware('5 minutes');
 
-// 🟢 الراوتس اللي عليها الكاش (لأنها مش بتتغير كل ثانية)
 app.use('/api/rooms', cache, roomRoutes);
 app.use('/api/gallery', cache, galleryRoutes);
 app.use('/api/reviews', cache, reviewRoutes);
 app.use('/api/retreats', cache, retreatRoutes);
-// شلنا الـ cache من الـ media عشان لو رفعت صورة ومسحتها تسمع معاك في اللوحة فوراً
 app.use('/api/media', mediaRoutes); 
 
-// 🔴 الراوتس اللي من غير كاش (لازم تكون Real-time)
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);

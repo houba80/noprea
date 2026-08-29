@@ -11,7 +11,6 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🟢 دالة البحث عن الفولدر الآمن
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -31,14 +30,12 @@ if (!fs.existsSync(persistentUploadsPath)) {
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// 🟢 دالة الـ SEO لتنظيف اسم الصورة
 const generateSEOFileName = (originalname) => {
   const nameWithoutExt = path.parse(originalname).name;
   const safeName = nameWithoutExt.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   return `${safeName}-${Date.now().toString().slice(-4)}.webp`; 
 };
 
-// 1. الرفع الفردي
 router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'Please upload an image!' });
@@ -56,7 +53,6 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   }
 });
 
-// 2. الرفع الجماعي (Bulk Upload)
 router.post('/bulk', protect, upload.array('images', 20), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) return res.status(400).json({ message: 'Please upload images!' });

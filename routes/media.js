@@ -8,7 +8,6 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🟢 نفس الدالة الذكية عشان يلاقي فولدر الصور الجديد
 const findFolderUpwards = (startDir, folderName) => {
   let currentDir = startDir;
   while (currentDir !== path.parse(currentDir).root) {
@@ -21,7 +20,6 @@ const findFolderUpwards = (startDir, folderName) => {
 
 const persistentUploadsPath = findFolderUpwards(__dirname, 'persistent_uploads') || path.join(__dirname, '../uploads');
 
-// 1. جلب كل الصور وعرضها
 router.get('/', async (req, res) => {
   try {
     if (!fs.existsSync(persistentUploadsPath)) {
@@ -30,7 +28,6 @@ router.get('/', async (req, res) => {
 
     const files = fs.readdirSync(persistentUploadsPath);
     
-    // فلترة الملفات عشان نعرض الصور بس ونرتبهم من الأحدث للأقدم
     const mediaFiles = files
       .filter(file => file.match(/\.(jpg|jpeg|png|gif|webp)$/i))
       .map(file => {
@@ -50,7 +47,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 2. حذف صورة من السيرفر
 router.delete('/:filename', protect, async (req, res) => {
   try {
     const { filename } = req.params;
