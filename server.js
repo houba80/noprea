@@ -60,10 +60,15 @@ app.use(cors({
 
 app.use(express.json()); 
 
-// 🟢 فتحنا البابين عشان يشتغل مع أي مسار جاي من الفرونت إند
-app.use('/uploads', express.static(persistentUploadsPath)); 
-app.use('/persistent_uploads', express.static(persistentUploadsPath)); 
+const staticOptions = {
+  setHeaders: (res, path, stat) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+};
 
+app.use('/uploads', express.static(persistentUploadsPath, staticOptions)); 
+app.use('/persistent_uploads', express.static(persistentUploadsPath, staticOptions));
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully!'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
