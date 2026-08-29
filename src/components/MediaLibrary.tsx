@@ -6,6 +6,15 @@ const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : 'https://api.nopreahotel.com';
 
+// 🟢 دالة ذكية للتعرف على المسار القديم والجديد
+const getValidImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('/uploads') || url.startsWith('/persistent_uploads')) {
+    return `${BACKEND_URL}${url}`;
+  }
+  return url;
+};
+
 export default function MediaLibrary() {
   const [media, setMedia] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +67,7 @@ export default function MediaLibrary() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {media.map((file, idx) => (
             <div key={idx} className="relative group border border-gray-200 rounded-lg overflow-hidden h-32 bg-gray-50 shadow-sm">
-              <img src={file.url.startsWith('/uploads') ? `${BACKEND_URL}${file.url}` : file.url} alt={file.name} className="w-full h-full object-cover" />
+              <img src={getValidImageUrl(file.url)} alt={file.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button 
                   onClick={() => handleDelete(file.name)} 

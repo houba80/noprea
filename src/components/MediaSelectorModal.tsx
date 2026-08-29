@@ -6,6 +6,15 @@ const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:5000' 
   : 'https://api.nopreahotel.com';
 
+// 🟢 نفس الدالة للتعرف على مسار الصور الجديد
+const getValidImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('/uploads') || url.startsWith('/persistent_uploads')) {
+    return `${BACKEND_URL}${url}`;
+  }
+  return url;
+};
+
 interface MediaSelectorModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -121,7 +130,7 @@ export default function MediaSelectorModal({ isOpen, onClose, onSelect, multiSel
                 const isSelected = selected.includes(file.url);
                 return (
                   <div key={idx} onClick={() => toggleSelection(file.url)} className={`relative h-32 rounded-lg overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-blue-600 shadow-md transform scale-105' : 'border-transparent hover:border-gray-300'}`}>
-                    <img src={file.url.startsWith('/uploads') ? `${BACKEND_URL}${file.url}` : file.url} className="w-full h-full object-cover" alt="media" />
+                    <img src={getValidImageUrl(file.url)} className="w-full h-full object-cover" alt="media" />
                     {isSelected && (
                       <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1">
                         <CheckCircle className="w-4 h-4" />
