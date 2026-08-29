@@ -69,11 +69,19 @@ export default function GalleryManager() {
     });
   };
 
+  // 🟢 التعديل الذكي لتوحيد نوع الداتا المستلمة من مكتبة الميديا
   const handleMediaSelected = (selection: string | string[]) => {
-    if (mediaTarget === 'cover' && typeof selection === 'string') {
-      setNewAlbum(prev => ({ ...prev, coverImage: selection }));
-    } else if (mediaTarget === 'inner' && Array.isArray(selection)) {
-      const newImgs = selection.map(url => ({ src: url, title: newAlbum.title || 'Gallery Image' }));
+    const selectedArray = Array.isArray(selection) ? selection : [selection];
+    
+    if (selectedArray.length === 0) return;
+
+    if (mediaTarget === 'cover') {
+      setNewAlbum(prev => ({ ...prev, coverImage: selectedArray[0] }));
+    } else if (mediaTarget === 'inner') {
+      const newImgs = selectedArray.map(url => ({ 
+        src: url, 
+        title: newAlbum.title || 'Gallery Image' 
+      }));
       setNewAlbum(prev => ({ ...prev, images: [...prev.images, ...newImgs] }));
     }
   };
