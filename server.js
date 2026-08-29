@@ -63,7 +63,7 @@ app.use(cors({
 
 app.use(express.json()); 
 
-app.use('/uploads', express.static(persistentUploadsPath)); 
+app.use('/persistent_uploads', express.static(persistentUploadsPath)); 
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully! (noprea_db)'))
