@@ -69,18 +69,30 @@ const staticOptions = {
 
 app.use('/uploads', express.static(persistentUploadsPath, staticOptions)); 
 app.use('/persistent_uploads', express.static(persistentUploadsPath, staticOptions));
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB successfully!'))
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
+// 🟢 تفعيل الكاش لمدة 5 دقايق للزوار
 const cache = apicache.middleware('5 minutes');
 
-app.use('/api/rooms', roomRoutes);
+// 🟢 المراقب الذكي: بيمسح الكاش أوتوماتيك مع أي تعديل أو حذف أو إضافة من الأدمن
+app.use((req, res, next) => {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    apicache.clear(); 
+  }
+  next();
+});
+
+// 🟢 الراوتس اللي عليها الكاش
+app.use('/api/rooms', cache, roomRoutes);
 app.use('/api/gallery', cache, galleryRoutes);
 app.use('/api/reviews', cache, reviewRoutes);
 app.use('/api/retreats', cache, retreatRoutes);
-app.use('/api/media', mediaRoutes); 
 
+// الراوتس اللي محتاجة تكون Real-time دايماً من غير كاش
+app.use('/api/media', mediaRoutes); 
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
@@ -89,7 +101,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
 
 app.get('/api/status', (req, res) => {
-  res.json({ message: 'NOPREA Backend is 100% Complete with Turbo Cache! 🚀' });
+  res.json({ message: 'NOPREA Backend is 100% Complete with Smart Auto-Clearing Cache! 🚀' });
 });
 
 app.listen(PORT, () => {
