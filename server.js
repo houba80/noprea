@@ -75,7 +75,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 const cache = apicache.middleware('5 minutes');
 
-app.use('/api/rooms', cache, roomRoutes);
+app.use('/api/rooms', roomRoutes);
 app.use('/api/gallery', cache, galleryRoutes);
 app.use('/api/reviews', cache, reviewRoutes);
 app.use('/api/retreats', cache, retreatRoutes);
