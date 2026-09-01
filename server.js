@@ -75,6 +75,9 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch((err) => console.error('❌ Failed to connect to MongoDB:', err));
 
 // 🟢 تفعيل الكاش لمدة 5 دقايق للزوار
+apicache.options({
+  appendKey: (req, res) => req.headers.origin || 'unknown-origin'
+});
 const cache = apicache.middleware('5 minutes');
 
 // 🟢 المراقب الذكي: بيمسح الكاش أوتوماتيك مع أي تعديل أو حذف أو إضافة من الأدمن
